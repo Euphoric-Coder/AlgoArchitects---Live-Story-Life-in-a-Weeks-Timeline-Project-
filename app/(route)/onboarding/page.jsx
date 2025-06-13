@@ -22,13 +22,13 @@ const Page = () => {
     email: "",
     profileImage: "",
     gender: "",
+    dob: "",
     age: "",
     location: "",
     bio: "",
     linkedInUrl: "",
     websites: [],
     aboutMe: {},
-    blogPreferences: [],
 
     isOnboarded: false,
   });

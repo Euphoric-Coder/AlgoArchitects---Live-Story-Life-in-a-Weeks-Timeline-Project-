@@ -57,7 +57,7 @@ const CommonFieldsSection = ({ formState, formErrors, handleChange }) => {
         understand your background and preferences better.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
+      <div>
         <FormSelect
           id="gender"
           label="Gender"
@@ -69,18 +69,32 @@ const CommonFieldsSection = ({ formState, formErrors, handleChange }) => {
           icon={<User2 size={18} />}
         />
 
-        <FormInput
-          id="age"
-          label="Age"
-          type="number"
-          value={formState.age}
-          onChange={(e) => handleChange("age", e.target.value)}
-          error={formErrors.age}
-          required
-          icon={<Hourglass size={24} />}
-          min={18}
-          max={100}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <FormInput
+            id="age"
+            label="Age"
+            type="date"
+            value={formState.age}
+            onChange={(e) => handleChange("age", e.target.value)}
+            error={formErrors.age}
+            required
+            icon={<Hourglass size={24} />}
+            min={18}
+            max={100}
+          />
+          <FormInput
+            id="age"
+            label="Age"
+            type="number"
+            value={formState.age}
+            onChange={(e) => handleChange("age", e.target.value)}
+            error={formErrors.age}
+            required
+            icon={<Hourglass size={24} />}
+            min={18}
+            max={100}
+          />
+        </div>
 
         <div className="md:col-span-2">
           <FormInput
@@ -130,10 +144,7 @@ const CommonFieldsSection = ({ formState, formErrors, handleChange }) => {
         </h3>
 
         {(formState.websites || []).map((website, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between gap-4"
-          >
+          <div key={index} className="flex items-center justify-between gap-4">
             <div className="flex-1 min-w-[200px]">
               <FormInput
                 id={`website-name-${index}`}
