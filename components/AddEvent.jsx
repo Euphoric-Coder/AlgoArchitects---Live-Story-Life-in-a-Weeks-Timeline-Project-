@@ -31,7 +31,9 @@ const AddEvent = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     title: "",
     date: "",
-    category: "personal",
+    year: "",
+    week: "",
+    type: "personal",
     description: "",
     notes: "",
     links: [""],
@@ -92,7 +94,9 @@ const AddEvent = ({ onSubmit }) => {
     setFormData({
       title: "",
       date: "",
-      category: "personal",
+      year: "",
+      week: "",
+      type: "personal",
       description: "",
       notes: "",
       links: [""],
@@ -174,9 +178,54 @@ const AddEvent = ({ onSubmit }) => {
                 type="date"
                 required
                 value={formData.date}
-                onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
-                }
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const today = new Date();
+
+                  // --- Age String Calculation ---
+                  let years = today.getFullYear() - selectedDate.getFullYear();
+                  let months = today.getMonth() - selectedDate.getMonth();
+                  let days = today.getDate() - selectedDate.getDate();
+
+                  if (days < 0) {
+                    months -= 1;
+                    const prevMonth = new Date(
+                      today.getFullYear(),
+                      today.getMonth(),
+                      0
+                    );
+                    days += prevMonth.getDate();
+                  }
+
+                  if (months < 0) {
+                    years -= 1;
+                    months += 12;
+                  }
+
+                  const ageString = `${years} years ${months} months ${days} days`;
+
+                  // --- Weeks since 1st Jan of selected year ---
+                  const startOfYear = new Date(
+                    selectedDate.getFullYear(),
+                    0,
+                    1
+                  ); // Jan 1 of that year
+                  const msInWeek = 1000 * 60 * 60 * 24 * 7;
+                  const week =
+                    Math.floor((selectedDate - startOfYear) / msInWeek) + 1;
+
+                  const year = selectedDate.getFullYear();
+
+                  console.log("Age:", ageString);
+                  console.log("Week:", week, "Year:", year);
+
+                  setFormData({
+                    ...formData,
+                    date: e.target.value,
+                    week: week,
+                    year: year,
+                  });
+                }}
                 className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
               />
             </div>
@@ -187,13 +236,13 @@ const AddEvent = ({ onSubmit }) => {
               <Tag className="w-4 h-4" /> Category
             </label>
             <Select
-              value={formData.category}
+              value={formData.type}
               onValueChange={(value) => {
                 const selected = categories.find((c) => c.value === value);
                 if (selected) {
                   setFormData({
                     ...formData,
-                    category: selected.value,
+                    type: selected.value,
                     icon: selected.icon,
                     color: selected.color,
                   });
