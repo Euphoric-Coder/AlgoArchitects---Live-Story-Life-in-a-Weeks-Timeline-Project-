@@ -15,6 +15,7 @@ import {
   Users,
   Plane,
   Globe,
+  ScrollText,
   Plus,
 } from "lucide-react";
 import TimelineView from "@/components/Timeline";
@@ -48,6 +49,7 @@ const page = () => {
     Users,
     Plane,
     Globe,
+    ScrollText,
     Plus,
   };
 
@@ -116,16 +118,16 @@ const page = () => {
         userData[0]?.autoSeededHistoricalEvents === false
       ) {
         console.log(historicalEvents);
-        // const result = await db
-        //   .insert(Events)
-        //   .values(historicalEvents)
-        //   .returning({ insertedId: Events.id });
-        // const resul1 = await db
-        //   .update(UsersTable)
-        //   .set({
-        //     autoSeededHistoricalEvents: true,
-        //   })
-        //   .where(eq(UsersTable.email, user?.primaryEmailAddress?.emailAddress));
+        const result = await db
+          .insert(Events)
+          .values(historicalEvents)
+          .returning({ insertedId: Events.id });
+        const resul1 = await db
+          .update(UsersTable)
+          .set({
+            autoSeededHistoricalEvents: true,
+          })
+          .where(eq(UsersTable.email, user?.primaryEmailAddress?.emailAddress));
       }
     };
 

@@ -429,7 +429,7 @@ const Events = () => {
       color: "from-amber-500 to-amber-600",
     },
     {
-      type: "historical",
+      value: "historical",
       label: "Historical Events",
       icon: ScrollText,
       color: "from-yellow-500 to-yellow-600",
@@ -599,8 +599,8 @@ const Events = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none"
               >
-                {categories.map((category) => (
-                  <option key={category.value} value={category.value}>
+                {categories.map((category, index) => (
+                  <option key={index} value={category.value}>
                     {category.label}
                   </option>
                 ))}
