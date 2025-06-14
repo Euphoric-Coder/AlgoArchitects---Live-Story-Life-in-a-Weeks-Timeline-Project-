@@ -37,7 +37,7 @@ const AddEvent = ({ onSubmit }) => {
     links: [""],
     coverImage: "",
     coverImageId: "",
-    icon: "Heart",
+    icon: "Users",
     color: "from-blue-500 to-blue-600",
   });
 
@@ -57,7 +57,7 @@ const AddEvent = ({ onSubmit }) => {
     {
       value: "personal",
       label: "Personal Event",
-      icon: "Heart",
+      icon: "Users",
       color: "from-rose-500 to-rose-600",
     },
     {
@@ -98,7 +98,7 @@ const AddEvent = ({ onSubmit }) => {
       links: [""],
       coverImage: "",
       coverImageId: "",
-      icon: "Heart",
+      icon: "Users",
       color: "from-rose-500 to-rose-600",
     });
     setIsOpen(false);
