@@ -87,7 +87,7 @@ const AddEvent = ({ onSubmit }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <Button className="btn9">
           + Add Event
         </Button>
       </DialogTrigger>
@@ -272,14 +272,13 @@ const AddEvent = ({ onSubmit }) => {
           <DialogFooter className="mt-6">
             <DialogClose asChild>
               <Button
-                type="button"
-                variant="secondary"
                 onClick={() => setIsOpen(false)}
+                className="w-full del3 hover:bg-red-200"
               >
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit">Add Event</Button>
+            <Button type="submit" className="w-full btn4">Add Event</Button>
           </DialogFooter>
         </form>
       </DialogContent>

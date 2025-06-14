@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Calendar,
   Search,
@@ -23,306 +23,376 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddEvent from "@/components/AddEvent";
+import { useUser } from "@clerk/nextjs";
 
 const Events = () => {
   const navigate = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [expandedYears, setExpandedYears] = useState(new Set([2023])); 
+  const [expandedYears, setExpandedYears] = useState(new Set([2023]));
+  const [eventsData, setEventsData] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
+  const { user } = useUser();
 
-  const [sortBy, setSortBy] = useState("date"); 
+  const [sortBy, setSortBy] = useState("date");
 
-  const [sortOrder, setSortOrder] = useState("desc"); 
+  const [sortOrder, setSortOrder] = useState("desc");
+
+  const iconMap = {
+    Calendar,
+    Zap,
+    Heart,
+    GraduationCap,
+    Briefcase,
+    MapPin,
+    Award,
+    Users,
+    Plane,
+    Globe,
+    Plus,
+  };
+
+  useEffect(() => {
+    const fetchEventData = async () => {
+      if (!user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const result = await fetch("/api/fetch-events");
+
+        const eventData = await result.json();
+        if (!eventData) {
+          console.error("No user or event data found");
+          return;
+        }
+
+        console.log("Fetched event data:", eventData);
+
+        setEventsData(eventData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchEventData();
+  }, [user]);
+
+  useEffect(() => {
+    processEventData();
+  }, [eventsData]);
+
+  const processEventData = () => {
+    if (eventsData) {
+      const events = [];
+      eventsData.forEach((event) => {
+        const Icon = iconMap[event.icon] || Calendar; // fallback to Calendar
+
+        events.push({
+          id: event.id,
+          year: event.year,
+          week: event.week,
+          date: event.date,
+          type: event.type,
+          title: event.title,
+          description: event.description,
+          icon: Icon,
+          color: event.color,
+        });
+
+        console.log(events);
+        setAllEvents(events);
+      });
+    }
+  };
 
   // Enhanced sample events data
-  const allEvents = [
-    // 2023 Events
-    {
-      id: "22",
-      year: 2023,
-      week: 10,
-      date: "2023-03-10",
-      type: "milestone",
-      title: "Career Change",
-      description: "Joined Fortune 500 company as Tech Lead",
-      icon: Briefcase,
-      color: "from-purple-500 to-purple-600",
-    },
-    {
-      id: "23",
-      year: 2023,
-      week: 30,
-      date: "2023-07-28",
-      type: "travel",
-      title: "Southeast Asia Trip",
-      description: "Solo travel through Thailand, Vietnam, Cambodia",
-      icon: Plane,
-      color: "from-cyan-500 to-cyan-600",
-    },
-    {
-      id: "24",
-      year: 2023,
-      week: 42,
-      date: "2023-10-20",
-      type: "personal",
-      title: "Relationship Milestone",
-      description: "Moved in together after 2 years dating",
-      icon: Heart,
-      color: "from-rose-500 to-rose-600",
-    },
-    {
-      id: "25",
-      year: 2023,
-      week: 42,
-      date: "2023-10-22",
-      type: "milestone",
-      title: "Adopted a Pet",
-      description: "Welcomed rescue dog Max into our home",
-      icon: Heart,
-      color: "from-rose-500 to-rose-600",
-    },
+  // const allEvents = [
+  //   // 2023 Events
+  //   {
+  //     id: "22",
+  //     year: 2023,
+  //     week: 10,
+  //     date: "2023-03-10",
+  //     type: "milestone",
+  //     title: "Career Change",
+  //     description: "Joined Fortune 500 company as Tech Lead",
+  //     icon: Briefcase,
+  //     color: "from-purple-500 to-purple-600",
+  //   },
+  //   {
+  //     id: "23",
+  //     year: 2023,
+  //     week: 30,
+  //     date: "2023-07-28",
+  //     type: "travel",
+  //     title: "Southeast Asia Trip",
+  //     description: "Solo travel through Thailand, Vietnam, Cambodia",
+  //     icon: Plane,
+  //     color: "from-cyan-500 to-cyan-600",
+  //   },
+  //   {
+  //     id: "24",
+  //     year: 2023,
+  //     week: 42,
+  //     date: "2023-10-20",
+  //     type: "personal",
+  //     title: "Relationship Milestone",
+  //     description: "Moved in together after 2 years dating",
+  //     icon: Heart,
+  //     color: "from-rose-500 to-rose-600",
+  //   },
+  //   {
+  //     id: "25",
+  //     year: 2023,
+  //     week: 42,
+  //     date: "2023-10-22",
+  //     type: "milestone",
+  //     title: "Adopted a Pet",
+  //     description: "Welcomed rescue dog Max into our home",
+  //     icon: Heart,
+  //     color: "from-rose-500 to-rose-600",
+  //   },
 
-    // 2022 Events
-    {
-      id: "17",
-      year: 2022,
-      week: 22,
-      date: "2022-06-01",
-      type: "milestone",
-      title: "Bought First Home",
-      description: "Purchased 2BR condo in Oakland",
-      icon: Heart,
-      color: "from-rose-500 to-rose-600",
-    },
-    {
-      id: "18",
-      year: 2022,
-      week: 35,
-      date: "2022-08-30",
-      type: "personal",
-      title: "Started Photography",
-      description: "New creative hobby discovered during pandemic",
-      icon: Award,
-      color: "from-amber-500 to-amber-600",
-    },
-    {
-      id: "19",
-      year: 2022,
-      week: 48,
-      date: "2022-12-01",
-      type: "career",
-      title: "Side Project Launch",
-      description: "Mobile app reached 10K users in first month",
-      icon: Zap,
-      color: "from-emerald-500 to-emerald-600",
-    },
-    {
-      id: "20",
-      year: 2022,
-      week: 48,
-      date: "2022-12-05",
-      type: "milestone",
-      title: "Tech Conference Speaker",
-      description: "First speaking engagement at DevCon 2022",
-      icon: Award,
-      color: "from-amber-500 to-amber-600",
-    },
-    {
-      id: "21",
-      year: 2022,
-      week: 48,
-      date: "2022-12-07",
-      type: "personal",
-      title: "Met Life Partner",
-      description: "Met future partner at the tech conference",
-      icon: Heart,
-      color: "from-rose-500 to-rose-600",
-    },
+  //   // 2022 Events
+  //   {
+  //     id: "17",
+  //     year: 2022,
+  //     week: 22,
+  //     date: "2022-06-01",
+  //     type: "milestone",
+  //     title: "Bought First Home",
+  //     description: "Purchased 2BR condo in Oakland",
+  //     icon: Heart,
+  //     color: "from-rose-500 to-rose-600",
+  //   },
+  //   {
+  //     id: "18",
+  //     year: 2022,
+  //     week: 35,
+  //     date: "2022-08-30",
+  //     type: "personal",
+  //     title: "Started Photography",
+  //     description: "New creative hobby discovered during pandemic",
+  //     icon: Award,
+  //     color: "from-amber-500 to-amber-600",
+  //   },
+  //   {
+  //     id: "19",
+  //     year: 2022,
+  //     week: 48,
+  //     date: "2022-12-01",
+  //     type: "career",
+  //     title: "Side Project Launch",
+  //     description: "Mobile app reached 10K users in first month",
+  //     icon: Zap,
+  //     color: "from-emerald-500 to-emerald-600",
+  //   },
+  //   {
+  //     id: "20",
+  //     year: 2022,
+  //     week: 48,
+  //     date: "2022-12-05",
+  //     type: "milestone",
+  //     title: "Tech Conference Speaker",
+  //     description: "First speaking engagement at DevCon 2022",
+  //     icon: Award,
+  //     color: "from-amber-500 to-amber-600",
+  //   },
+  //   {
+  //     id: "21",
+  //     year: 2022,
+  //     week: 48,
+  //     date: "2022-12-07",
+  //     type: "personal",
+  //     title: "Met Life Partner",
+  //     description: "Met future partner at the tech conference",
+  //     icon: Heart,
+  //     color: "from-rose-500 to-rose-600",
+  //   },
 
-    // 2021 Events
-    {
-      id: "12",
-      year: 2021,
-      week: 15,
-      date: "2021-04-15",
-      type: "personal",
-      title: "First Marathon",
-      description: "Completed SF Marathon in 4:12:33",
-      icon: Award,
-      color: "from-amber-500 to-amber-600",
-    },
-    {
-      id: "13",
-      year: 2021,
-      week: 28,
-      date: "2021-07-10",
-      type: "travel",
-      title: "European Adventure",
-      description: "3-week backpacking trip through 8 countries",
-      icon: Plane,
-      color: "from-cyan-500 to-cyan-600",
-    },
-    {
-      id: "14",
-      year: 2021,
-      week: 28,
-      date: "2021-07-15",
-      type: "personal",
-      title: "Photography Passion",
-      description: "Discovered love for travel photography",
-      icon: Award,
-      color: "from-amber-500 to-amber-600",
-    },
-    {
-      id: "15",
-      year: 2021,
-      week: 40,
-      date: "2021-10-05",
-      type: "career",
-      title: "Promotion",
-      description: "Promoted to Senior Software Developer",
-      icon: Briefcase,
-      color: "from-emerald-500 to-emerald-600",
-    },
-    {
-      id: "16",
-      year: 2021,
-      week: 40,
-      date: "2021-10-08",
-      type: "milestone",
-      title: "Team Lead Role",
-      description: "Started leading a team of 4 developers",
-      icon: Users,
-      color: "from-pink-500 to-pink-600",
-    },
+  //   // 2021 Events
+  //   {
+  //     id: "12",
+  //     year: 2021,
+  //     week: 15,
+  //     date: "2021-04-15",
+  //     type: "personal",
+  //     title: "First Marathon",
+  //     description: "Completed SF Marathon in 4:12:33",
+  //     icon: Award,
+  //     color: "from-amber-500 to-amber-600",
+  //   },
+  //   {
+  //     id: "13",
+  //     year: 2021,
+  //     week: 28,
+  //     date: "2021-07-10",
+  //     type: "travel",
+  //     title: "European Adventure",
+  //     description: "3-week backpacking trip through 8 countries",
+  //     icon: Plane,
+  //     color: "from-cyan-500 to-cyan-600",
+  //   },
+  //   {
+  //     id: "14",
+  //     year: 2021,
+  //     week: 28,
+  //     date: "2021-07-15",
+  //     type: "personal",
+  //     title: "Photography Passion",
+  //     description: "Discovered love for travel photography",
+  //     icon: Award,
+  //     color: "from-amber-500 to-amber-600",
+  //   },
+  //   {
+  //     id: "15",
+  //     year: 2021,
+  //     week: 40,
+  //     date: "2021-10-05",
+  //     type: "career",
+  //     title: "Promotion",
+  //     description: "Promoted to Senior Software Developer",
+  //     icon: Briefcase,
+  //     color: "from-emerald-500 to-emerald-600",
+  //   },
+  //   {
+  //     id: "16",
+  //     year: 2021,
+  //     week: 40,
+  //     date: "2021-10-08",
+  //     type: "milestone",
+  //     title: "Team Lead Role",
+  //     description: "Started leading a team of 4 developers",
+  //     icon: Users,
+  //     color: "from-pink-500 to-pink-600",
+  //   },
 
-    // 2020 Events
-    {
-      id: "7",
-      year: 2020,
-      week: 20,
-      date: "2020-05-15",
-      type: "milestone",
-      title: "Graduated University",
-      description: "Bachelor of Computer Science with honors",
-      icon: GraduationCap,
-      color: "from-purple-500 to-purple-600",
-    },
-    {
-      id: "8",
-      year: 2020,
-      week: 20,
-      date: "2020-05-16",
-      type: "personal",
-      title: "Graduation Party",
-      description: "Celebrated with family and friends",
-      icon: Heart,
-      color: "from-rose-500 to-rose-600",
-    },
-    {
-      id: "9",
-      year: 2020,
-      week: 32,
-      date: "2020-08-10",
-      type: "career",
-      title: "Started Career",
-      description: "Junior Software Developer at InnovateTech",
-      icon: Briefcase,
-      color: "from-emerald-500 to-emerald-600",
-    },
-    {
-      id: "10",
-      year: 2020,
-      week: 45,
-      date: "2020-11-05",
-      type: "personal",
-      title: "Moved to New City",
-      description: "Relocated to San Francisco for work",
-      icon: MapPin,
-      color: "from-blue-500 to-blue-600",
-    },
-    {
-      id: "11",
-      year: 2020,
-      week: 45,
-      date: "2020-11-07",
-      type: "milestone",
-      title: "First Apartment",
-      description: "Signed lease for first solo apartment",
-      icon: Heart,
-      color: "from-rose-500 to-rose-600",
-    },
+  //   // 2020 Events
+  //   {
+  //     id: "7",
+  //     year: 2020,
+  //     week: 20,
+  //     date: "2020-05-15",
+  //     type: "milestone",
+  //     title: "Graduated University",
+  //     description: "Bachelor of Computer Science with honors",
+  //     icon: GraduationCap,
+  //     color: "from-purple-500 to-purple-600",
+  //   },
+  //   {
+  //     id: "8",
+  //     year: 2020,
+  //     week: 20,
+  //     date: "2020-05-16",
+  //     type: "personal",
+  //     title: "Graduation Party",
+  //     description: "Celebrated with family and friends",
+  //     icon: Heart,
+  //     color: "from-rose-500 to-rose-600",
+  //   },
+  //   {
+  //     id: "9",
+  //     year: 2020,
+  //     week: 32,
+  //     date: "2020-08-10",
+  //     type: "career",
+  //     title: "Started Career",
+  //     description: "Junior Software Developer at InnovateTech",
+  //     icon: Briefcase,
+  //     color: "from-emerald-500 to-emerald-600",
+  //   },
+  //   {
+  //     id: "10",
+  //     year: 2020,
+  //     week: 45,
+  //     date: "2020-11-05",
+  //     type: "personal",
+  //     title: "Moved to New City",
+  //     description: "Relocated to San Francisco for work",
+  //     icon: MapPin,
+  //     color: "from-blue-500 to-blue-600",
+  //   },
+  //   {
+  //     id: "11",
+  //     year: 2020,
+  //     week: 45,
+  //     date: "2020-11-07",
+  //     type: "milestone",
+  //     title: "First Apartment",
+  //     description: "Signed lease for first solo apartment",
+  //     icon: Heart,
+  //     color: "from-rose-500 to-rose-600",
+  //   },
 
-    // 2019 Events
-    {
-      id: "4",
-      year: 2019,
-      week: 8,
-      date: "2019-02-20",
-      type: "travel",
-      title: "Study Abroad",
-      description: "Semester in Tokyo, Japan",
-      icon: Plane,
-      color: "from-cyan-500 to-cyan-600",
-    },
-    {
-      id: "5",
-      year: 2019,
-      week: 22,
-      date: "2019-06-01",
-      type: "personal",
-      title: "Met Best Friend",
-      description: "Lifelong friendship began at coffee shop",
-      icon: Users,
-      color: "from-pink-500 to-pink-600",
-    },
-    {
-      id: "6",
-      year: 2019,
-      week: 35,
-      date: "2019-09-01",
-      type: "career",
-      title: "First Job Offer",
-      description: "Received offer from tech startup",
-      icon: Zap,
-      color: "from-emerald-500 to-emerald-600",
-    },
+  //   // 2019 Events
+  //   {
+  //     id: "4",
+  //     year: 2019,
+  //     week: 8,
+  //     date: "2019-02-20",
+  //     type: "travel",
+  //     title: "Study Abroad",
+  //     description: "Semester in Tokyo, Japan",
+  //     icon: Plane,
+  //     color: "from-cyan-500 to-cyan-600",
+  //   },
+  //   {
+  //     id: "5",
+  //     year: 2019,
+  //     week: 22,
+  //     date: "2019-06-01",
+  //     type: "personal",
+  //     title: "Met Best Friend",
+  //     description: "Lifelong friendship began at coffee shop",
+  //     icon: Users,
+  //     color: "from-pink-500 to-pink-600",
+  //   },
+  //   {
+  //     id: "6",
+  //     year: 2019,
+  //     week: 35,
+  //     date: "2019-09-01",
+  //     type: "career",
+  //     title: "First Job Offer",
+  //     description: "Received offer from tech startup",
+  //     icon: Zap,
+  //     color: "from-emerald-500 to-emerald-600",
+  //   },
 
-    // 2018 Events
-    {
-      id: "1",
-      year: 2018,
-      week: 12,
-      date: "2018-03-20",
-      type: "milestone",
-      title: "Started University",
-      description: "Began Computer Science degree at State University",
-      icon: GraduationCap,
-      color: "from-purple-500 to-purple-600",
-    },
-    {
-      id: "2",
-      year: 2018,
-      week: 28,
-      date: "2018-07-10",
-      type: "career",
-      title: "Summer Internship",
-      description: "Software development internship at TechCorp",
-      icon: Briefcase,
-      color: "from-emerald-500 to-emerald-600",
-    },
-    {
-      id: "3",
-      year: 2018,
-      week: 45,
-      date: "2018-11-15",
-      type: "personal",
-      title: "First Hackathon",
-      description: "Won 2nd place in university hackathon",
-      icon: Award,
-      color: "from-amber-500 to-amber-600",
-    },
-  ];
+  //   // 2018 Events
+  //   {
+  //     id: "1",
+  //     year: 2018,
+  //     week: 12,
+  //     date: "2018-03-20",
+  //     type: "milestone",
+  //     title: "Started University",
+  //     description: "Began Computer Science degree at State University",
+  //     icon: GraduationCap,
+  //     color: "from-purple-500 to-purple-600",
+  //   },
+  //   {
+  //     id: "2",
+  //     year: 2018,
+  //     week: 28,
+  //     date: "2018-07-10",
+  //     type: "career",
+  //     title: "Summer Internship",
+  //     description: "Software development internship at TechCorp",
+  //     icon: Briefcase,
+  //     color: "from-emerald-500 to-emerald-600",
+  //   },
+  //   {
+  //     id: "3",
+  //     year: 2018,
+  //     week: 45,
+  //     date: "2018-11-15",
+  //     type: "personal",
+  //     title: "First Hackathon",
+  //     description: "Won 2nd place in university hackathon",
+  //     icon: Award,
+  //     color: "from-amber-500 to-amber-600",
+  //   },
+  // ];
 
   const categories = [
     { value: "all", label: "All Categories", icon: Globe },
@@ -449,6 +519,51 @@ const Events = () => {
 
         <AddEvent />
       </div>
+
+      {/* Summary Stats */}
+      {eventsByYear.length > 0 && (
+        <div className="bg-gradient-to-br from-blue-50 via-sky-100 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6 transition-all duration-300">
+          <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
+            Timeline Summary
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="form-layout text-center p-4 rounded-xl">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+                {eventsByYear.length}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                Years Covered
+              </div>
+            </div>
+            <div className="form-layout text-center p-4 rounded-xl">
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
+                {getTotalEvents()}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                Total Events
+              </div>
+            </div>
+            <div className="form-layout text-center p-4 rounded-xl">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+                {allEvents.filter((e) => e.type === "milestone").length}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                Milestones
+              </div>
+            </div>
+            <div className="form-layout text-center p-4 rounded-xl">
+              <div className="text-2xl font-bold text-cyan-600 dark:text-cyan-400 mb-1">
+                {Math.max(...eventsByYear.map((y) => y.year)) -
+                  Math.min(...eventsByYear.map((y) => y.year)) +
+                  1}
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-400">
+                Year Span
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters and Search */}
       <div className="bg-gradient-to-br from-blue-100 via-sky-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6 transition-all duration-300">
@@ -693,51 +808,6 @@ const Events = () => {
           </div>
         )}
       </div>
-
-      {/* Summary Stats */}
-      {eventsByYear.length > 0 && (
-        <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">
-            Timeline Summary
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center p-4 bg-slate-50 dark:bg-slate-700 rounded-xl">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">
-                {eventsByYear.length}
-              </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Years Covered
-              </div>
-            </div>
-            <div className="text-center p-4 bg-slate-50 dark:bg-slate-700 rounded-xl">
-              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">
-                {getTotalEvents()}
-              </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Total Events
-              </div>
-            </div>
-            <div className="text-center p-4 bg-slate-50 dark:bg-slate-700 rounded-xl">
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">
-                {allEvents.filter((e) => e.type === "milestone").length}
-              </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Milestones
-              </div>
-            </div>
-            <div className="text-center p-4 bg-slate-50 dark:bg-slate-700 rounded-xl">
-              <div className="text-2xl font-bold text-cyan-600 dark:text-cyan-400 mb-1">
-                {Math.max(...eventsByYear.map((y) => y.year)) -
-                  Math.min(...eventsByYear.map((y) => y.year)) +
-                  1}
-              </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                Year Span
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
