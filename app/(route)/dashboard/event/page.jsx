@@ -22,6 +22,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AddEvent from "@/components/AddEvent";
 
 const Events = () => {
   const navigate = useRouter();
@@ -446,17 +447,11 @@ const Events = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => navigate.push("/dashboard")}
-          className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-          Add Event
-        </button>
+        <AddEvent />
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6">
+      <div className="bg-gradient-to-br from-blue-100 via-sky-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-6 transition-all duration-300">
         <div className="grid lg:grid-cols-4 gap-4">
           {/* Search */}
           <div className="lg:col-span-2">
@@ -467,7 +462,7 @@ const Events = () => {
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               />
             </div>
           </div>
@@ -479,7 +474,7 @@ const Events = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none"
+                className="w-full pl-10 pr-4 py-3 bg-white/80 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none"
               >
                 {categories.map((category) => (
                   <option key={category.value} value={category.value}>
@@ -497,7 +492,7 @@ const Events = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="flex-1 px-3 py-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="flex-1 px-3 py-3 bg-white/80 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
               >
                 <option value="date">Date</option>
                 <option value="title">Title</option>
@@ -507,7 +502,7 @@ const Events = () => {
                 onClick={() =>
                   setSortOrder(sortOrder === "asc" ? "desc" : "asc")
                 }
-                className="px-3 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-xl transition-colors duration-200"
+                className="px-3 py-3 bg-white/80 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 rounded-xl transition-colors duration-200"
               >
                 {sortOrder === "desc" ? (
                   <ChevronDown className="w-5 h-5" />
@@ -540,7 +535,7 @@ const Events = () => {
                 setSearchQuery("");
                 setSelectedCategory("all");
               }}
-              className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors duration-200"
+              className="del3"
             >
               Clear all
             </button>
@@ -559,7 +554,7 @@ const Events = () => {
               {/* Year Header */}
               <button
                 onClick={() => toggleYear(year)}
-                className="w-full px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 hover:from-slate-100 hover:to-slate-200 dark:hover:from-slate-600 dark:hover:to-slate-700 transition-all duration-200 flex items-center justify-between"
+                className="w-full px-6 py-4 bg-gradient-to-r from-sky-100 to-blue-100 dark:from-slate-700 dark:to-slate-800 hover:from-sky-200 hover:to-blue-200 dark:hover:from-slate-600 dark:hover:to-slate-700 transition-all duration-200 flex items-center justify-between"
               >
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25">
@@ -596,7 +591,7 @@ const Events = () => {
                   {events.map((event, index) => (
                     <div
                       key={event.id}
-                      className="group relative overflow-hidden bg-slate-50/80 dark:bg-slate-700/50 rounded-xl p-6 border border-slate-200/50 dark:border-slate-600/50 hover:border-slate-300/50 dark:hover:border-slate-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-slate-200/20 dark:hover:shadow-slate-900/20 backdrop-blur-sm transform hover:-translate-y-1 cursor-pointer"
+                      className="group form-layout cursor-pointer hover:scale-[1.01] transition-all duration-300"
                       onClick={() => navigate.push(`/event/${event.id}`)}
                     >
                       <div className="flex items-start gap-4">
