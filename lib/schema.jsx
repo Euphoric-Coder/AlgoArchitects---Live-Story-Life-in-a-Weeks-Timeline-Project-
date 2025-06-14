@@ -27,7 +27,9 @@ export const Events = pgTable("events", {
   type: varchar("type").notNull(),
   title: varchar("title").notNull(),
   description: varchar("description"),
+  notes: varchar("notes"),
   icon: varchar("icon"),
   color: varchar("color"),
+  links: jsonb("links"),
   createdBy: varchar("createdBy").notNull(),
 });

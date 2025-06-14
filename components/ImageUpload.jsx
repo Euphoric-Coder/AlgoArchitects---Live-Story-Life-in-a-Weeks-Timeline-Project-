@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import ImageKit from "imagekit-javascript";
 import { FiUploadCloud } from "react-icons/fi";
 import { Button } from "./ui/button";
@@ -9,7 +9,7 @@ import Image from "next/image";
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 
-const uploadToImageKit = async (file, setProgress, setData, setFileId) => {
+const uploadToImageKit = async (file, setData, setFileId) => {
   const auth = await fetch("/api/upload-auth").then((res) => res.json());
 
   const imagekit = new ImageKit({
@@ -36,11 +36,7 @@ const uploadToImageKit = async (file, setProgress, setData, setFileId) => {
         console.log("Upload success", result);
         setData(result);
         setFileId(result.fileId);
-        setProgress(null);
       }
-    },
-    (progress) => {
-      setProgress(progress.progress.toFixed(0));
     }
   );
 };
@@ -63,23 +59,9 @@ export default function ImageUpload({
   setUploadData,
   fileId,
   setFileId,
-  handleInputChange,
-  tutorial = false,
 }) {
   const inputRef = useRef(null);
-  const [progress, setProgress] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    // Whenever uploadData or fileId changes, we call handleInputChange
-    // Only call if both are defined, or tweak the logic as needed
-    if (uploadData && fileId && !tutorial) {
-      handleInputChange("coverImage", {
-        data: uploadData,
-        fileId: fileId,
-      });
-    }
-  }, [uploadData, fileId, handleInputChange]);
 
   const handleUpload = async (file) => {
     if (!file?.type.startsWith("image/")) {
@@ -92,16 +74,8 @@ export default function ImageUpload({
 
     setUploadData(null);
     setFileId(null);
-    setProgress(0);
-    await uploadToImageKit(file, setProgress, setUploadData, setFileId);
+    await uploadToImageKit(file, setUploadData, setFileId);
   };
-
-  // const handleDrop = (e) => {
-  //   e.preventDefault();
-  //   setIsDragging(false);
-  //   const file = e.dataTransfer.files?.[0];
-  //   if (file) handleUpload(file);
-  // };
 
   const handleDrop = async (e) => {
     e.preventDefault();
@@ -140,18 +114,8 @@ export default function ImageUpload({
   const handleReset = async () => {
     if (fileId) await deleteFile(fileId);
     setUploadData(null);
-    setProgress(null);
     setFileId(null);
     if (inputRef.current) inputRef.current.value = "";
-  };
-
-  const handleReUpload = async () => {
-    if (fileId) await deleteFile(fileId);
-    setUploadData(null);
-    setProgress(null);
-    setFileId(null);
-    if (inputRef.current) inputRef.current.value = "";
-    inputRef.current.click();
   };
 
   return (
@@ -220,7 +184,11 @@ export default function ImageUpload({
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <Button
-                  onClick={handleReset}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent bubbling up
+                    handleReset();
+                  }}
                   className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 dark:from-blue-600 dark:via-purple-700 dark:to-pink-600 text-white font-medium px-5 py-2 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform"
                 >
                   Reupload

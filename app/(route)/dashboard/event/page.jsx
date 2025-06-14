@@ -30,7 +30,9 @@ const Events = () => {
   const navigate = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [expandedYears, setExpandedYears] = useState(new Set([2023]));
+  const [expandedYears, setExpandedYears] = useState(
+    new Set([new Date().getFullYear()])
+  );
   const [eventsData, setEventsData] = useState([]);
   const [allEvents, setAllEvents] = useState([]);
   const { user } = useUser();

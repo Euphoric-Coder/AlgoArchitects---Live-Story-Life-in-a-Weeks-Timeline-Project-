@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Calendar, Tag, FileText, Link, Upload, Image } from "lucide-react";
+import { Calendar, Tag, FileText, Link, Upload, Image, X } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -22,9 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
+import ImageUpload from "./ImageUpload";
 
 const AddEvent = ({ onSubmit }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [uploadData, setUploadData] = useState(null);
+  const [fileId, setFileId] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -33,14 +36,59 @@ const AddEvent = ({ onSubmit }) => {
     notes: "",
     links: [""],
     coverImage: "",
-    files: [],
+    coverImageId: "",
+    icon: "Heart",
+    color: "from-blue-500 to-blue-600",
   });
 
-  const [dragActive, setDragActive] = useState(false);
+  const categories = [
+    {
+      value: "milestone",
+      label: "Major Milestone",
+      icon: "Award",
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      value: "career",
+      label: "Career Event",
+      icon: "Briefcase",
+      color: "from-emerald-500 to-emerald-600",
+    },
+    {
+      value: "personal",
+      label: "Personal Event",
+      icon: "Heart",
+      color: "from-rose-500 to-rose-600",
+    },
+    {
+      value: "travel",
+      label: "Travel & Adventure",
+      icon: "Plane",
+      color: "from-cyan-500 to-cyan-600",
+    },
+    {
+      value: "global",
+      label: "Global Event",
+      icon: "Globe",
+      color: "from-amber-500 to-amber-600",
+    },
+    {
+      value: "historical",
+      label: "Historical Events",
+      icon: "ScrollText",
+      color: "from-yellow-500 to-yellow-600",
+    },
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const submittedData = {
+      ...formData,
+      coverImage: uploadData?.url || "",
+      coverImageId: fileId || "",
+    };
+
+    onSubmit(submittedData);
     setFormData({
       title: "",
       date: "",
@@ -49,24 +97,24 @@ const AddEvent = ({ onSubmit }) => {
       notes: "",
       links: [""],
       coverImage: "",
-      files: [],
+      coverImageId: "",
+      icon: "Heart",
+      color: "from-rose-500 to-rose-600",
     });
     setIsOpen(false);
   };
 
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
-    else if (e.type === "dragleave") setDragActive(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files?.[0]) {
-      console.log("Files dropped:", e.dataTransfer.files);
+  const deleteFile = async (fileId) => {
+    if (!fileId) return;
+    console.log("Deleting file with ID:", fileId);
+    try {
+      await fetch("/api/delete-image", {
+        method: "POST",
+        body: JSON.stringify({ fileId }),
+      });
+      console.log("Deleted previous file:", fileId);
+    } catch (err) {
+      console.error("Delete failed", err);
     }
   };
 
@@ -87,9 +135,7 @@ const AddEvent = ({ onSubmit }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="btn9">
-          + Add Event
-        </Button>
+        <Button className="btn9">+ Add Event</Button>
       </DialogTrigger>
 
       <DialogContent className="max-h-[90vh] overflow-y-auto border-2 border-blue-200 bg-gradient-to-b from-cyan-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 shadow-2xl">
@@ -142,19 +188,40 @@ const AddEvent = ({ onSubmit }) => {
             </label>
             <Select
               value={formData.category}
-              onValueChange={(value) =>
-                setFormData({ ...formData, category: value })
-              }
+              onValueChange={(value) => {
+                const selected = categories.find((c) => c.value === value);
+                if (selected) {
+                  setFormData({
+                    ...formData,
+                    category: selected.value,
+                    icon: selected.icon,
+                    color: selected.color,
+                  });
+                }
+              }}
             >
               <SelectTrigger className="input-field">
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent className="select-content mt-2">
-                <SelectItem value="personal" className="select-item">Personal Event</SelectItem>
-                <SelectItem value="milestone" className="select-item">Major Milestone</SelectItem>
-                <SelectItem value="career" className="select-item">Career Event</SelectItem>
-                <SelectItem value="travel" className="select-item">Travel & Adventure</SelectItem>
-                <SelectItem value="global" className="select-item">Global Event</SelectItem>
+                <SelectItem value="personal" className="select-item">
+                  Personal Event
+                </SelectItem>
+                <SelectItem value="milestone" className="select-item">
+                  Major Milestone
+                </SelectItem>
+                <SelectItem value="career" className="select-item">
+                  Career Event
+                </SelectItem>
+                <SelectItem value="travel" className="select-item">
+                  Travel & Adventure
+                </SelectItem>
+                <SelectItem value="global" className="select-item">
+                  Global Event
+                </SelectItem>
+                <SelectItem value="historical" className="select-item">
+                  Historical Event
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -185,7 +252,7 @@ const AddEvent = ({ onSubmit }) => {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label className="flex items-center gap-2 text-sm font-medium">
               <Image className="w-4 h-4" /> Cover Image URL
             </label>
@@ -197,7 +264,13 @@ const AddEvent = ({ onSubmit }) => {
               }
               placeholder="https://example.com/image.jpg"
             />
-          </div>
+          </div> */}
+          <ImageUpload
+            uploadData={uploadData}
+            setUploadData={setUploadData}
+            fileId={fileId}
+            setFileId={setFileId}
+          />
 
           <div>
             <label className="flex items-center gap-2 text-sm font-medium">
@@ -217,7 +290,7 @@ const AddEvent = ({ onSubmit }) => {
                     <Button
                       type="button"
                       onClick={() => removeLink(index)}
-                      className="bg-red-100 text-red-600 px-3 py-2 rounded-lg"
+                      className="bg-red-100 text-red-600 px-3 py-2 rounded-lg mb-2"
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -228,14 +301,14 @@ const AddEvent = ({ onSubmit }) => {
                 type="button"
                 variant="ghost"
                 onClick={addLink}
-                className="text-blue-600"
+                className="btn8"
               >
                 + Add another link
               </Button>
             </div>
           </div>
 
-          <div>
+          {/* <div>
             <label className="flex items-center gap-2 text-sm font-medium">
               <Upload className="w-4 h-4" /> File Attachments
             </label>
@@ -267,7 +340,7 @@ const AddEvent = ({ onSubmit }) => {
                 }}
               />
             </div>
-          </div>
+          </div> */}
 
           <DialogFooter className="mt-6">
             <DialogClose asChild>
@@ -278,7 +351,9 @@ const AddEvent = ({ onSubmit }) => {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" className="w-full btn4">Add Event</Button>
+            <Button type="submit" className="w-full btn4">
+              Add Event
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

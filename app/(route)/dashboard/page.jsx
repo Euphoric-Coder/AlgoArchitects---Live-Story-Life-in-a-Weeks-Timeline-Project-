@@ -25,7 +25,6 @@ import { db } from "@/lib/dbConfig";
 import { eq } from "drizzle-orm";
 import { Events, Users as UsersTable } from "@/lib/schema";
 import { transformHistoricalEvents } from "@/lib/seedHistoricalData";
-import { add } from "date-fns";
 
 const page = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -54,25 +53,6 @@ const page = () => {
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user?.primaryEmailAddress?.emailAddress) return;
-
-      try {
-        const result = await fetch("/api/fetch-timeline");
-
-        const { user: userData, events: eventData } = await result.json();
-        if (!userData || !eventData) {
-          console.error("No user or event data found");
-          return;
-        }
-
-        setUserData(userData);
-        setEventData(eventData);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
     fetchUserData();
   }, [user]);
 
@@ -109,7 +89,6 @@ const page = () => {
   }, [user]);
 
   useEffect(() => {
-
     // For seeding historical events initially
     const addHistoricalEvents = async () => {
       if (
@@ -171,6 +150,30 @@ const page = () => {
     }
   };
 
+  const fetchUserData = async () => {
+    if (!user?.primaryEmailAddress?.emailAddress) return;
+
+    try {
+      const result = await fetch("/api/fetch-timeline");
+
+      const { user: userData, events: eventData } = await result.json();
+      if (!userData || !eventData) {
+        console.error("No user or event data found");
+        return;
+      }
+
+      setUserData(userData);
+      setEventData(eventData);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const refreshData = () => {
+    fetchUserData();
+    processTimelineData();
+  };
+
   const handleEventClick = (eventId) => {
     router.push(`/dashboard/event/${eventId}`);
   };
@@ -188,6 +191,7 @@ const page = () => {
         onYearChange={setSelectedYear}
         onEventClick={handleEventClick}
         timelineData={timelineData}
+        refreshData={refreshData}
       />
     </div>
   );

@@ -6,7 +6,7 @@ import {
   Plus,
 } from "lucide-react";
 
-const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData }) => {
+const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, refreshData }) => {
   const [hoveredWeek, setHoveredWeek] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
 
@@ -36,7 +36,7 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData }
     {
       type: "personal",
       label: "Personal Event",
-      color: "from-blue-500 to-blue-600",
+      color: "from-rose-500 to-rose-600",
     },
     {
       type: "travel",
