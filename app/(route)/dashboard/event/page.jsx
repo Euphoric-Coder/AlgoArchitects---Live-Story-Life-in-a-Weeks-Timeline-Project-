@@ -415,7 +415,7 @@ const Events = () => {
     {
       value: "personal",
       label: "Personal Event",
-      icon: Heart,
+      icon: Users,
       color: "from-blue-500 to-blue-600",
     },
     {
