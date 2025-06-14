@@ -20,11 +20,17 @@ import {
 import TimelineView from "@/components/Timeline";
 import { useRouter } from "next/navigation";
 import AddEvent from "@/components/AddEvent";
+import { db } from "@/lib/dbConfig";
+import { eq } from "drizzle-orm";
+import { Events, Users as UsersTable } from "@/lib/schema";
+import { transformHistoricalEvents } from "@/lib/seedHistoricalData";
+import { add } from "date-fns";
 
 const page = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [userData, setUserData] = useState(null);
   const [eventData, setEventData] = useState(null);
+  const [historicalEvents, sethistoricalEvents] = useState([]);
   const [timelineData, setTimelineData] = useState([]);
   const { user } = useUser();
   const router = useRouter();
@@ -71,6 +77,60 @@ const page = () => {
   useEffect(() => {
     processTimelineData();
   }, [userData, eventData]);
+
+  useEffect(() => {
+    const retrieveHistoricalEvents = async () => {
+      const userData = await db
+        .select()
+        .from(UsersTable)
+        .where(eq(UsersTable.email, user?.primaryEmailAddress?.emailAddress));
+
+      setUserData(userData);
+
+      const dob = userData[0]?.dob;
+
+      if (dob) {
+        fetch("/historical_event.csv")
+          .then((res) => res.text())
+          .then((csvText) => {
+            const result = transformHistoricalEvents(
+              csvText,
+              user?.primaryEmailAddress?.emailAddress,
+              dob
+            );
+            sethistoricalEvents(result);
+          });
+      }
+    };
+
+    retrieveHistoricalEvents();
+  }, [user]);
+
+  useEffect(() => {
+
+    // For seeding historical events initially
+    const addHistoricalEvents = async () => {
+      if (
+        historicalEvents.length > 0 &&
+        userData[0]?.dob &&
+        userData[0]?.autoSeededHistoricalEvents === false
+      ) {
+        console.log(historicalEvents);
+        // const result = await db
+        //   .insert(Events)
+        //   .values(historicalEvents)
+        //   .returning({ insertedId: Events.id });
+        // const resul1 = await db
+        //   .update(UsersTable)
+        //   .set({
+        //     autoSeededHistoricalEvents: true,
+        //   })
+        //   .where(eq(UsersTable.email, user?.primaryEmailAddress?.emailAddress));
+      }
+    };
+
+    addHistoricalEvents();
+  }, [historicalEvents]);
 
   const processTimelineData = () => {
     if (userData && eventData) {
@@ -119,7 +179,6 @@ const page = () => {
 
   return (
     <div>
-
       <AddEvent onSubmit={handleAddEvent} />
 
       <TimelineView

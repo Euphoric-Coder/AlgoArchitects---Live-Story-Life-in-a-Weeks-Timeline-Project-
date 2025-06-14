@@ -51,6 +51,7 @@ const Events = () => {
     Plane,
     Globe,
     Plus,
+    ScrollText,
   };
 
   useEffect(() => {
@@ -426,6 +427,12 @@ const Events = () => {
       label: "Global Event",
       icon: Globe,
       color: "from-amber-500 to-amber-600",
+    },
+    {
+      type: "historical",
+      label: "Historical Events",
+      icon: ScrollText,
+      color: "from-yellow-500 to-yellow-600",
     },
   ];
 

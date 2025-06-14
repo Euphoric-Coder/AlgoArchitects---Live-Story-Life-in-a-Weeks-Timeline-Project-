@@ -48,6 +48,11 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData }
       label: "Global Event",
       color: "from-amber-500 to-amber-600",
     },
+    {
+      type: "historical",
+      label: "Historical Events",
+      color: "from-yellow-500 to-yellow-600",
+    },
   ];
 
   const getWeekEvents = (weekNumber) => {
