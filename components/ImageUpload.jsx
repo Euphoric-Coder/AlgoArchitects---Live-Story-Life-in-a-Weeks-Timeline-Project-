@@ -23,7 +23,7 @@ const uploadToImageKit = async (file, setProgress, setData, setFileId) => {
       file,
       fileName: file.name,
       useUniqueFileName: true,
-      folder: "/cover-image",
+      folder: "/CoverImages",
       token: auth.token,
       signature: auth.signature,
       expire: auth.expire,

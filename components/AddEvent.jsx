@@ -1,0 +1,290 @@
+"use client";
+
+import React, { useState } from "react";
+import { X, Calendar, Tag, FileText, Link, Upload, Image } from "lucide-react";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
+
+const AddEvent = ({ onSubmit }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    date: "",
+    category: "personal",
+    description: "",
+    notes: "",
+    links: [""],
+    coverImage: "",
+    files: [],
+  });
+
+  const [dragActive, setDragActive] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+    setFormData({
+      title: "",
+      date: "",
+      category: "personal",
+      description: "",
+      notes: "",
+      links: [""],
+      coverImage: "",
+      files: [],
+    });
+    setIsOpen(false);
+  };
+
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    else if (e.type === "dragleave") setDragActive(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files?.[0]) {
+      console.log("Files dropped:", e.dataTransfer.files);
+    }
+  };
+
+  const addLink = () =>
+    setFormData({ ...formData, links: [...formData.links, ""] });
+
+  const updateLink = (index, value) => {
+    const newLinks = [...formData.links];
+    newLinks[index] = value;
+    setFormData({ ...formData, links: newLinks });
+  };
+
+  const removeLink = (index) => {
+    const newLinks = formData.links.filter((_, i) => i !== index);
+    setFormData({ ...formData, links: newLinks });
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          + Add Event
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="max-h-[90vh] overflow-y-auto border-2 border-blue-200 bg-gradient-to-b from-cyan-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 shadow-2xl">
+        <FormBackgroundEffect />
+        <DialogHeader>
+          <DialogTitle className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 dark:from-blue-400 dark:via-indigo-400 dark:to-cyan-400">
+            Add New Event
+          </DialogTitle>
+          <DialogDescription className="text-gray-600 dark:text-gray-400 mt-4">
+            Fill out the form to record a new personal or global event.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <FileText className="w-4 h-4" /> Title
+              </label>
+              <Input
+                required
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+                className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
+                placeholder="Enter event title..."
+              />
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <Calendar className="w-4 h-4" /> Date
+              </label>
+              <Input
+                type="date"
+                required
+                value={formData.date}
+                onChange={(e) =>
+                  setFormData({ ...formData, date: e.target.value })
+                }
+                className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <Tag className="w-4 h-4" /> Category
+            </label>
+            <Select
+              value={formData.category}
+              onValueChange={(value) =>
+                setFormData({ ...formData, category: value })
+              }
+            >
+              <SelectTrigger className="input-field">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent className="select-content mt-2">
+                <SelectItem value="personal" className="select-item">Personal Event</SelectItem>
+                <SelectItem value="milestone" className="select-item">Major Milestone</SelectItem>
+                <SelectItem value="career" className="select-item">Career Event</SelectItem>
+                <SelectItem value="travel" className="select-item">Travel & Adventure</SelectItem>
+                <SelectItem value="global" className="select-item">Global Event</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Description</label>
+            <textarea
+              rows={3}
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] w-full px-4 py-3 rounded-xl dark:bg-slate-700 resize-none"
+              placeholder="Describe what happened..."
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Additional Notes</label>
+            <textarea
+              rows={2}
+              value={formData.notes}
+              onChange={(e) =>
+                setFormData({ ...formData, notes: e.target.value })
+              }
+              className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] w-full px-4 py-3 rounded-xl dark:bg-slate-700 resize-none"
+              placeholder="Any additional thoughts or context..."
+            />
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <Image className="w-4 h-4" /> Cover Image URL
+            </label>
+            <Input
+              type="url"
+              value={formData.coverImage}
+              onChange={(e) =>
+                setFormData({ ...formData, coverImage: e.target.value })
+              }
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <Link className="w-4 h-4" /> Related Links
+            </label>
+            <div className="space-y-2">
+              {formData.links.map((link, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    type="url"
+                    value={link}
+                    onChange={(e) => updateLink(index, e.target.value)}
+                    placeholder="https://example.com"
+                    className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] flex-1"
+                  />
+                  {formData.links.length > 1 && (
+                    <Button
+                      type="button"
+                      onClick={() => removeLink(index)}
+                      className="bg-red-100 text-red-600 px-3 py-2 rounded-lg"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={addLink}
+                className="text-blue-600"
+              >
+                + Add another link
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium">
+              <Upload className="w-4 h-4" /> File Attachments
+            </label>
+            <div
+              className={`relative border-2 border-dashed p-6 rounded-xl ${
+                dragActive ? "border-blue-400 bg-blue-50" : "border-slate-300"
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              <div className="text-center">
+                <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                <p className="text-sm">
+                  Drag and drop files here, or click to select
+                </p>
+                <p className="text-xs text-slate-500">
+                  Supports images, documents, and more
+                </p>
+              </div>
+              <input
+                type="file"
+                multiple
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onChange={(e) => {
+                  if (e.target.files)
+                    console.log("Files selected:", e.target.files);
+                }}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="mt-6">
+            <DialogClose asChild>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit">Add Event</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default AddEvent;

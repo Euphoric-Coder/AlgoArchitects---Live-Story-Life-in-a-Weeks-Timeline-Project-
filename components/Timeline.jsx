@@ -3,107 +3,12 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  Zap,
-  Heart,
-  GraduationCap,
-  Briefcase,
-  MapPin,
-  Award,
-  Users,
-  Plane,
-  Globe,
   Plus,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 
-const TimelineView = ({ selectedYear, onYearChange, onEventClick }) => {
+const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData }) => {
   const [hoveredWeek, setHoveredWeek] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [eventData, setEventData] = useState(null);
-  const [timelineData, setTimelineData] = useState([]);
-  const { user } = useUser();
-
-  const iconMap = {
-    Calendar,
-    ChevronLeft,
-    ChevronRight,
-    Zap,
-    Heart,
-    GraduationCap,
-    Briefcase,
-    MapPin,
-    Award,
-    Users,
-    Plane,
-    Globe,
-    Plus,
-  };
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!user?.primaryEmailAddress?.emailAddress) return;
-
-      try {
-        const result = await fetch("/api/fetch-timeline");
-
-        const { user: userData, events: eventData } = await result.json();
-        if (!userData || !eventData) {
-          console.error("No user or event data found");
-          return;
-        }
-
-        setUserData(userData);
-        setEventData(eventData);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [user]);
-
-  useEffect(() => {
-    const processTimelineData = () => {
-      if (userData && eventData) {
-        const dob = new Date(userData.dob);
-        const birthYear = dob.getFullYear();
-        const currentYear = new Date().getFullYear();
-
-        const timelineMap = {};
-
-        // Step 1: Initialize empty arrays for all years from DOB to now
-        for (let year = birthYear; year <= currentYear; year++) {
-          timelineMap[year.toString()] = [];
-        }
-
-        // Step 2: Insert events into their respective years
-        eventData.forEach((event) => {
-          const yearKey = event.year.toString();
-
-          if (!timelineMap[yearKey]) {
-            timelineMap[yearKey] = [];
-          }
-          const Icon = iconMap[event.icon] || Calendar; // fallback to Calendar
-
-          timelineMap[yearKey].push({
-            id: event.id,
-            week: event.week,
-            type: event.type,
-            title: event.title,
-            description: event.description,
-            icon: Icon,
-            color: event.color,
-            bgColor: event.bgColor,
-          });
-        });
-
-        setTimelineData(timelineMap);
-      }
-    };
-
-    processTimelineData();
-  }, [userData, eventData]);
 
   const years = Object.keys(timelineData).map(Number).sort();
   const currentYearEvents = timelineData[selectedYear] || [];

@@ -14,6 +14,7 @@ import {
   LogOut,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function DashboardLayout({ children }) {
   const [isDark, setIsDark] = useState(false);
@@ -73,9 +74,7 @@ export default function DashboardLayout({ children }) {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center gap-3 p-6 border-b border-slate-200/50 dark:border-slate-700/50">
-            <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-sm">
-              <Calendar className="w-6 h-6 text-white" />
-            </div>
+            <Image src={"/logo.png"} alt="logo" width={50} height={50} />
             <span className="text-xl font-semibold text-slate-800 dark:text-white">
               Life Timeline
             </span>
