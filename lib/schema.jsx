@@ -19,6 +19,7 @@ export const Users = pgTable("users", {
 export const Events = pgTable("events", {
   id: uuid("id").defaultRandom().primaryKey(),
   year: varchar("year").notNull(),
+  date: varchar("date").notNull(),
   week: varchar("week").notNull(),
   type: varchar("type").notNull(),
   title: varchar("title").notNull(),
