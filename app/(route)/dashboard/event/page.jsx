@@ -16,6 +16,7 @@ import {
   Users,
   Plane,
   Globe,
+  ScrollText,
   Plus,
   Clock,
   Tag,

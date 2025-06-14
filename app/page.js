@@ -2,6 +2,7 @@
 
 import { ModeToggle } from "@/components/theme-btn";
 import { Button } from "@/components/ui/button";
+import { transformHistoricalEvents } from "@/lib/seedHistoricalData";
 import {
   SignInButton,
   SignOutButton,
@@ -30,7 +31,13 @@ const page = () => {
           <SignInButton />
         </Button>
       )}
-      <Image src={"/logo.png"} alt="logo" width={100} height={100} className="" />
+      <Image
+        src={"/logo.png"}
+        alt="logo"
+        width={100}
+        height={100}
+        className=""
+      />
     </div>
   );
 };

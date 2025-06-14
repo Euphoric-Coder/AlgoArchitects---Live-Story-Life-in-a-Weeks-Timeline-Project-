@@ -27,31 +27,26 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData }
       type: "milestone",
       label: "Major Milestone",
       color: "from-purple-500 to-purple-600",
-      bgColor: "bg-purple-500",
     },
     {
       type: "career",
       label: "Career Event",
       color: "from-emerald-500 to-emerald-600",
-      bgColor: "bg-emerald-500",
     },
     {
       type: "personal",
       label: "Personal Event",
       color: "from-blue-500 to-blue-600",
-      bgColor: "bg-blue-500",
     },
     {
       type: "travel",
       label: "Travel & Adventure",
       color: "from-cyan-500 to-cyan-600",
-      bgColor: "bg-cyan-500",
     },
     {
       type: "global",
       label: "Global Event",
       color: "from-amber-500 to-amber-600",
-      bgColor: "bg-amber-500",
     },
   ];
 

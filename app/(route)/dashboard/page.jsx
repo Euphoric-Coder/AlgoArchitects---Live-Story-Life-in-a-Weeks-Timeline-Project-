@@ -102,7 +102,6 @@ const page = () => {
           description: event.description,
           icon: Icon,
           color: event.color,
-          bgColor: event.bgColor,
         });
       });
 

@@ -14,6 +14,9 @@ export const Users = pgTable("users", {
   linkedInUrl: varchar("linkedInUrl"),
   websites: jsonb("websites"),
   hasOnboarded: boolean("hasOnboarded").notNull().default(false),
+  autoSeededHistoricalEvents: boolean("autoSeededHistoricalEvents")
+    .notNull()
+    .default(false),
 });
 
 export const Events = pgTable("events", {
@@ -26,6 +29,5 @@ export const Events = pgTable("events", {
   description: varchar("description"),
   icon: varchar("icon"),
   color: varchar("color"),
-  bgColor: varchar("bgColor"),
   createdBy: varchar("createdBy").notNull(),
 });
