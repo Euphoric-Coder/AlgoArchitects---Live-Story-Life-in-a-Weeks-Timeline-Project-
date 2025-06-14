@@ -25,6 +25,7 @@ import { db } from "@/lib/dbConfig";
 import { eq } from "drizzle-orm";
 import { Events, Users as UsersTable } from "@/lib/schema";
 import { transformHistoricalEvents } from "@/lib/seedHistoricalData";
+import { toast } from "sonner";
 
 const page = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -178,8 +179,26 @@ const page = () => {
     router.push(`/dashboard/event/${eventId}`);
   };
 
-  const handleAddEvent = (eventData) => {
+  const handleAddEvent = async (eventData) => {
     console.log("Adding event:", eventData);
+    const result = await db
+      .insert(Events)
+      .values({
+        year: eventData.year,
+        date: eventData.date,
+        week: eventData.week,
+        type: eventData.type,
+        title: eventData.title,
+        description: eventData.description,
+        notes: eventData.notes,
+        icon: eventData.icon,
+        color: eventData.color,
+        links: eventData.links,
+        createdBy: user?.primaryEmailAddress?.emailAddress,
+      })
+      .returning({ insertedId: Events.id });
+    refreshData();
+    toast.success("Event added successfully!");
   };
 
   return (

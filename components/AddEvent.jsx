@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
 import ImageUpload from "./ImageUpload";
+import { useUser } from "@clerk/nextjs";
 
 const AddEvent = ({ onSubmit }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -106,20 +107,8 @@ const AddEvent = ({ onSubmit }) => {
       color: "from-rose-500 to-rose-600",
     });
     setIsOpen(false);
-  };
-
-  const deleteFile = async (fileId) => {
-    if (!fileId) return;
-    console.log("Deleting file with ID:", fileId);
-    try {
-      await fetch("/api/delete-image", {
-        method: "POST",
-        body: JSON.stringify({ fileId }),
-      });
-      console.log("Deleted previous file:", fileId);
-    } catch (err) {
-      console.error("Delete failed", err);
-    }
+    setUploadData(null);
+    setFileId(null);
   };
 
   const addLink = () =>
@@ -156,25 +145,33 @@ const AddEvent = ({ onSubmit }) => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex flex-col gap-4">
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium">
-                <FileText className="w-4 h-4" /> Title
+              <label
+                htmlFor="title"
+                className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+              >
+                Category
               </label>
               <Input
+                id="title"
                 required
                 value={formData.title}
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
+                className="mt-3 input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
                 placeholder="Enter event title..."
               />
             </div>
 
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium">
-                <Calendar className="w-4 h-4" /> Date
+              <label
+                htmlFor="dt"
+                className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+              >
+                Category
               </label>
               <Input
+                id="dt"
                 type="date"
                 required
                 value={formData.date}
@@ -226,14 +223,17 @@ const AddEvent = ({ onSubmit }) => {
                     year: year,
                   });
                 }}
-                className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
+                className="mt-3 input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px]"
               />
             </div>
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium">
-              <Tag className="w-4 h-4" /> Category
+            <label
+              htmlFor="category"
+              className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+            >
+              Category
             </label>
             <Select
               value={formData.type}
@@ -249,7 +249,7 @@ const AddEvent = ({ onSubmit }) => {
                 }
               }}
             >
-              <SelectTrigger className="input-field">
+              <SelectTrigger id="category" className="mt-3 input-field">
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent className="select-content mt-2">
@@ -276,27 +276,40 @@ const AddEvent = ({ onSubmit }) => {
           </div>
 
           <div>
-            <label className="text-sm font-medium">Description</label>
+            <label
+              htmlFor="descp"
+              className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+            >
+              Description
+            </label>
             <textarea
+              id="descp"
               rows={3}
+              required
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] w-full px-4 py-3 rounded-xl dark:bg-slate-700 resize-none"
+              className="mt-3 input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] w-full px-4 py-3 rounded-xl dark:bg-slate-700 resize-none"
               placeholder="Describe what happened..."
             />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Additional Notes</label>
+            <label
+              htmlFor="add-notes"
+              className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+            >
+              Add Notes
+            </label>
             <textarea
+              id="add-notes"
               rows={2}
               value={formData.notes}
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
               }
-              className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] w-full px-4 py-3 rounded-xl dark:bg-slate-700 resize-none"
+              className="mt-3 input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] w-full px-4 py-3 rounded-xl dark:bg-slate-700 resize-none"
               placeholder="Any additional thoughts or context..."
             />
           </div>
@@ -322,12 +335,12 @@ const AddEvent = ({ onSubmit }) => {
           />
 
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium">
-              <Link className="w-4 h-4" /> Related Links
+            <label className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105">
+              Related Links
             </label>
             <div className="space-y-2">
               {formData.links.map((link, index) => (
-                <div key={index} className="flex gap-2">
+                <div key={index} className="flex gap-2 mt-3">
                   <Input
                     type="url"
                     value={link}
@@ -339,7 +352,7 @@ const AddEvent = ({ onSubmit }) => {
                     <Button
                       type="button"
                       onClick={() => removeLink(index)}
-                      className="bg-red-100 text-red-600 px-3 py-2 rounded-lg mb-2"
+                      className="del3 hover:bg-red-200"
                     >
                       <X className="w-4 h-4" />
                     </Button>

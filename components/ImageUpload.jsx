@@ -124,7 +124,7 @@ export default function ImageUpload({
         <>
           <label
             htmlFor="cover-upload"
-            className="text-lg font-semibold text-blue-100 bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+            className="text-lg font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
           >
             Upload Cover Image
           </label>
@@ -136,18 +136,18 @@ export default function ImageUpload({
               setIsDragging(true);
             }}
             onDragLeave={() => setIsDragging(false)}
-            className={`relative mt-5 flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all ${
+            className={`relative mt-3 flex flex-col items-center justify-center p-8 border-2 rounded-xl cursor-pointer transition-all ${
               isDragging
-                ? "border-blue-600 bg-gradient-to-br from-cyan-100 to-indigo-200"
-                : "border-blue-300 bg-gradient-to-br from-cyan-50 to-indigo-100"
-            } shadow-md hover:shadow-lg`}
+                ? "border-blue-600 bg-gradient-to-br from-cyan-100 to-indigo-200 dark:from-slate-800 dark:to-slate-700"
+                : "border-blue-300 bg-gradient-to-br from-cyan-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800"
+            } shadow-md hover:shadow-lg dark:border-slate-600`}
           >
-            <FiUploadCloud className="text-blue-600 text-6xl mb-4" />
+            <FiUploadCloud className="text-blue-600 dark:text-blue-400 text-6xl mb-4" />
             <div className="text-center">
-              <p className="text-blue-800 text-lg font-semibold">
+              <p className="text-blue-800 dark:text-blue-300 text-lg font-semibold">
                 Drag & Drop your image here
               </p>
-              <p className="text-md text-indigo-500 mt-1">
+              <p className="text-md text-indigo-500 dark:text-indigo-300 mt-1">
                 or click to browse files
               </p>
             </div>

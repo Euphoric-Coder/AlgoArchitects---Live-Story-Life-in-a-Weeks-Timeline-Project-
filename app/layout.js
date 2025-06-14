@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
+import ThemedNotification from "@/components/ThemedNotifications";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             {children}
+            <ThemedNotification />
           </ThemeProvider>
         </body>
       </html>
