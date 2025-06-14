@@ -73,7 +73,7 @@ const BasicInfoSection = ({ fullName, email, profileImage, user }) => {
       <FormBackgroundEffect />
 
       <div className="flex justify-between items-start mb-4">
-        <h2 className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400 animate-gradient-text">
+        <h2 className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
           Basic Information
         </h2>
 

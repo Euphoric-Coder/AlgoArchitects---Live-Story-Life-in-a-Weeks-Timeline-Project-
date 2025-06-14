@@ -31,7 +31,7 @@ export async function GET() {
     return NextResponse.json({
       message: "User initialized successfully",
       userAdded: true,
-      isOnboarded: existingUser[0].isOnboarded,
+      isOnboarded: existingUser[0].hasOnboarded,
     });
   } catch (error) {
     console.error("Error adding user to DB:", error);

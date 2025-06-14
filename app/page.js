@@ -8,6 +8,7 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
+import Image from "next/image";
 import React from "react";
 
 const page = () => {
@@ -29,6 +30,7 @@ const page = () => {
           <SignInButton />
         </Button>
       )}
+      <Image src={"/logo.png"} alt="logo" width={100} height={100} className="" />
     </div>
   );
 };
