@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Sun, Moon, Menu, X } from "lucide-react";
 import Image from "next/image";
+import { SignOutButton, useUser } from "@clerk/nextjs";
+import { Button } from "../ui/button";
 
 const Navbar = ({ onGetStarted }) => {
   const [isDark, setIsDark] = useState(false);
-
+  const { isSignedIn } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -42,7 +44,13 @@ const Navbar = ({ onGetStarted }) => {
         <div className="flex justify-between items-center h-18">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <Image src={"/logo.png"} alt="Live Story" width={48} height={48} className="" />
+            <Image
+              src={"/logo.png"}
+              alt="Live Story"
+              width={48}
+              height={48}
+              className=""
+            />
             <span className="text-xl font-medium text-slate-800 dark:text-white tracking-tight">
               Live Story
             </span>
@@ -90,12 +98,23 @@ const Navbar = ({ onGetStarted }) => {
               )}
             </button>
 
-            <button
-              onClick={onGetStarted}
-              className="hidden md:block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-7 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-sm hover:shadow-lg tracking-wide"
-            >
-              Get Started
-            </button>
+            {isSignedIn ? (
+              <SignOutButton aschild>
+                <Button
+                  onClick={onGetStarted}
+                  className="btn3"
+                >
+                  Sign Out
+                </Button>
+              </SignOutButton>
+            ) : (
+              <Button
+                onClick={onGetStarted}
+                className="btn3"
+              >
+                Get Started
+              </Button>
+            )}
 
             {/* Mobile menu button */}
             <button
