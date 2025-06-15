@@ -1,43 +1,27 @@
 "use client";
 
-import { ModeToggle } from "@/components/theme-btn";
-import { Button } from "@/components/ui/button";
-import { transformHistoricalEvents } from "@/lib/seedHistoricalData";
-import {
-  SignInButton,
-  SignOutButton,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
-import Image from "next/image";
+import CallToAction from "@/components/Landing/CallToAction";
+import Features from "@/components/Landing/Features";
+import Hero from "@/components/Landing/Hero";
+import HowItWorks from "@/components/Landing/HowItWorks";
+import Navbar from "@/components/Landing/Navbar";
+import Preview from "@/components/Landing/Preview";
+import WhyThisMatters from "@/components/Landing/WhyThisMatters";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const page = () => {
-  const { isSignedIn } = useUser();
+  const navigate = useRouter();
 
   return (
-    <div>
-      page
-      <ModeToggle />
-      {isSignedIn ? (
-        <div>
-          <UserButton />
-          <Button asChild>
-            <SignOutButton />
-          </Button>
-        </div>
-      ) : (
-        <Button asChild>
-          <SignInButton />
-        </Button>
-      )}
-      <Image
-        src={"/logo.png"}
-        alt="logo"
-        width={100}
-        height={100}
-        className=""
-      />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50/20 via-blue-50/10 to-white dark:from-slate-900 dark:to-slate-800">
+      <Navbar onGetStarted={() => navigate.push("/sign-in")} />
+      <Hero onGetStarted={() => navigate.push("/sign-in")} />
+      <WhyThisMatters />
+      <Features />
+      <Preview />
+      <HowItWorks />
+      <CallToAction onGetStarted={() => navigate.push("/sign-in")} />
     </div>
   );
 };
