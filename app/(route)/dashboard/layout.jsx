@@ -15,10 +15,11 @@ import {
   Zap,
 } from "lucide-react";
 import Image from "next/image";
-import { SignOutButton } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardLayout({ children }) {
+  const { user } = useUser();
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
@@ -109,10 +110,10 @@ export default function DashboardLayout({ children }) {
               />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-slate-800 dark:text-white truncate">
-                  Alex Johnson
+                  {user?.fullName || "John Doe"}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                  alex.johnson@email.com
+                  {user?.primaryEmailAddress?.emailAddress}
                 </p>
               </div>
             </div>
