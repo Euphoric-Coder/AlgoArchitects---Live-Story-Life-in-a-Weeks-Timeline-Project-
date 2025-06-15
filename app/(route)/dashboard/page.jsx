@@ -17,6 +17,7 @@ import {
   Globe,
   ScrollText,
   Plus,
+  Download,
 } from "lucide-react";
 import TimelineView from "@/components/Timeline";
 import { useRouter } from "next/navigation";
@@ -26,12 +27,14 @@ import { eq } from "drizzle-orm";
 import { Events, Users as UsersTable } from "@/lib/schema";
 import { transformHistoricalEvents } from "@/lib/seedHistoricalData";
 import { toast } from "sonner";
+import ExportModal from "@/components/ExportModal";
 
 const page = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [userData, setUserData] = useState(null);
   const [eventData, setEventData] = useState(null);
   const [historicalEvents, sethistoricalEvents] = useState([]);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [timelineData, setTimelineData] = useState([]);
   const { user } = useUser();
   const router = useRouter();
@@ -71,9 +74,6 @@ const page = () => {
   //     router.push("/onboarding");
   //   }
   // }, [ userData]);
-  
-
-
 
   useEffect(() => {
     const retrieveHistoricalEvents = async () => {
@@ -230,8 +230,27 @@ const page = () => {
           </p>
         </div>
 
-        <AddEvent onSubmit={handleAddEvent} />
+        <div className="flex gap-4 items-center">
+          <button
+            onClick={() => setIsExportModalOpen(true)}
+            className="group bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl border border-slate-200 dark:border-slate-600 flex items-center gap-2"
+          >
+            <Download className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+            Export PDF
+          </button>
+
+          <AddEvent onSubmit={handleAddEvent} />
+        </div>
       </div>
+
+      {/* Export Modal */}
+      {eventData && (
+        <ExportModal
+          isOpen={isExportModalOpen}
+          onClose={() => setIsExportModalOpen(false)}
+          events={eventData}
+        />
+      )}
 
       <TimelineView
         selectedYear={selectedYear}
