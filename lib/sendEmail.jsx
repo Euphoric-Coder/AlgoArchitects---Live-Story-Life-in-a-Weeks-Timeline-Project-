@@ -5,6 +5,9 @@ import { Resend } from "resend";
 export async function sendEmail({ from, to, subject, react }) {
   const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 
+  console.log(from, to, subject);
+  console.log(resend);
+
   try {
     if (to !== process.env.NEXT_PUBLIC_TEST_USER_EMAIL) {
       const data = await resend.emails.send({

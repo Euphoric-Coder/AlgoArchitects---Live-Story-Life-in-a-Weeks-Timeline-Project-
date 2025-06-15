@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📅 Live Story (Life-In-Weeks Timeline) (SD-2)
 
-## Getting Started
+**Life-In-Weeks** is a powerful visual storytelling app that transforms every week of your life into a rich, interactive timeline — blending personal milestones with significant global events.
 
-First, run the development server:
+Whether you're reflecting on your journey, planning ahead, or simply curious about how time has flown, this app provides a clear and customizable view of your life in weeks.
+
+---
+
+
+
+
+## 🌟 Table of Contents
+
+- [🎯 Project Purpose](#-project-purpose)
+- [🚀 Features](#-features)
+- [🛠️ Tech Stack](#-tech-stack)
+- [📦 Installation & Setup](#-installation--setup)
+- [📁 Project Structure](#-project-structure)
+- [📄 Timeline Export](#-timeline-export)
+- [🤝 Contributors](#-contributors)
+
+
+---
+
+## 🎯 Project Purpose
+
+Time passes faster than we realize. Most people live over **4,000 weeks**, but rarely get to visualize them. This app solves that by:
+
+- Helping users **visualize their entire life**, week-by-week
+- Encouraging **reflection on key personal milestones**
+- Allowing discovery of **contextual world events** during important phases
+- Providing a **structured record** of a life lived, goals set, and memories made
+
+---
+
+## 🚀 Features
+
+### ✅ Core Functionalities
+
+| Feature                | Description |
+|------------------------|-------------|
+| 👤 **Authentication**  | User sign-up, login, and profile setup with Clerk |
+| 🎂 **Birthdate Logic** | Auto-calculates total weeks lived since user's birth and also some additional data Gender, Bio, Relevant Links and also the User can update the Profile Picture|
+| 🧠 **Timeline Engine** | Scrollable & zoomable interface to visualize each week and Interactive Interface|
+| 📅 **Event Management** | Add, edit, delete personal events with title, date, category |
+| 🖼️ **Image Attachments** | Upload and attach media (photos, documents) via ImageKit.io |
+| 🗃️ **Category Tagging** | Filter, color-code events by type (e.g., Personal, Academic, Travel) |
+| 🔔 **Reminders** | Show a Panel of Upcoming Anniversary |
+| 📄 **Export Timeline** | Convert entire visual timeline into a downloadable PDF using jsPDF |
+
+### 💎 Optional Features Added
+- Dark mode & accessibility enhancements
+- Uploading Cover Image for the events
+- Users can add Additinal Notes and Relevant Links
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer           | Technology                     |
+|----------------|---------------------------------|
+| Framework       | **Next.js** (React 18, App Router and Used API routes for backend handling) |
+| Styling         | **Tailwind CSS**, responsive utility-first design |
+| Auth & Profile  | **clerk.com** for modern identity management |
+| ORM             | **Drizzle ORM** for type-safe, schema-driven PostgreSQL |
+| Database        | **PostgreSQL** hosted on **NeonDB** |
+| File Handling   | **ImageKit.io** for image uploads, transformations |
+| PDF Generation  | **jsPDF** to convert timeline data into downloadable format |
+| Hosting         | Hosted the App on Vercel
+
+---
+
+## 📦 Installation & Setup
+
+### 🖥 Prerequisites
+
+- Node.js (for running the app in the localhost)
+- PostgreSQL account (NeonDB)
+- Clerk.com account (get the keys for it)
+- ImageKit.io account (also need to get the public keys and private keys and the URL Endpoint)
+
+### ⚙️ Steps
 
 ```bash
+# 1. Clone the repository
+git clone https://github.com/your-username/life-in-weeks.git
+cd AlgoArchitects---Live-Story-Life-in-a-Weeks-Timeline-Project-
+
+# 2. Install dependencies
+npm install --force (Use force if using React 19)
+
+# 3. Set up environment variables
+touch .env 
+touch .env.local
+# Fill in:
+# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+#CLERK_SECRET_KEY=
+#NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+#NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+#NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/onboarding
+#NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/onboarding
+#NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
+#NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
+#NEXT_PUBLIC_DATABASE_URL
+#NEXT_PUBLIC_PUBLIC_KEY
+#NEXT_PUBLIC_URL_ENDPOINT
+#PRIVATE_KEY
+
+# 4. Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

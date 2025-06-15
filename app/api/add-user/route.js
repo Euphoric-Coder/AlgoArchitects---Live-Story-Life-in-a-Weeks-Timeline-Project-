@@ -29,12 +29,14 @@ export async function GET() {
         profileImage: profileImage,
       });
 
+      console.log(email);
+
+
       // Send Welcome Email
       await sendEmail({
         from: "Live Story Team <onboarding@resend.dev>",
         to: email,
-        subject:
-          "Welcome to Live Story! Your timeline begins now",
+        subject: "Welcome to Live Story! Your timeline begins now",
         react: LiveStoryWelcomeEmail({
           username: user.firstName.split(" ")[0],
         }),
@@ -44,7 +46,7 @@ export async function GET() {
     return NextResponse.json({
       message: "User initialized successfully",
       userAdded: true,
-      isOnboarded: existingUser[0].hasOnboarded,
+      isOnboarded: existingUser[0]?.hasOnboarded,
     });
   } catch (error) {
     console.error("Error adding user to DB:", error);
