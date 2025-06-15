@@ -320,7 +320,7 @@ const TimelineView = ({
         <div className="mt-8 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h4 className="text-xl font-semibold text-slate-800 dark:text-white mb-1">
+              <h4 className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
                 {selectedYear} Events
               </h4>
               <p className="text-slate-600 dark:text-slate-400 font-light">

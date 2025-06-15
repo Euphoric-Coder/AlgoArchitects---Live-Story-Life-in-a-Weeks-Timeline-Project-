@@ -39,7 +39,7 @@ const AnniversaryList = ({ selectedYear }) => {
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold mb-4">
+      <h2 className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
         Anniversaries in {selectedYear}
       </h2>
 
