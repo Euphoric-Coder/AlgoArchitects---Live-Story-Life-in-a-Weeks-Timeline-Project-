@@ -34,7 +34,7 @@ const OnboardingSuccess = () => {
     // In a real app, you'd use router navigation here
     // e.g., router.push('/dashboard')
     // redirect("/test");
-    redirect("/");
+    redirect("/dashboard");
   };
 
   return (

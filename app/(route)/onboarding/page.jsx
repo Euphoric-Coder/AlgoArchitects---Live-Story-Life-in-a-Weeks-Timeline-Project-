@@ -100,37 +100,37 @@ const Page = () => {
 
     console.log("Submitted form data:", formData);
 
-    // const loadingToastId = toast.loading("Submitting your profile...");
+    const loadingToastId = toast.loading("Submitting your profile...");
 
-    // try {
-    //   setFormData((prev) => ({
-    //     ...prev,
-    //     // isOnboarded: true,
-    //   }));
+    try {
+      setFormData((prev) => ({
+        ...prev,
+        isOnboarded: true,
+      }));
 
-    //   const result = await db
-    //     .update(Users)
-    //     .set(formData)
-    //     .where(eq(Users.email, formData.email))
-    //     .returning();
+      const result = await db
+        .update(Users)
+        .set(formData)
+        .where(eq(Users.email, formData.email))
+        .returning();
 
-    //   if (result) {
-    //     setTimeout(() => {
-    //       toast.dismiss(loadingToastId);
-    //       toast.success("Profile submitted successfully!");
-    //       console.log("Form submitted:", formData);
-    //       // setSubmitted(true);
-    //     }, 1000);
-    //   } else {
-    //     setTimeout(() => {
-    //       toast.dismiss(loadingToastId);
-    //       toast.error("Something went wrong. Please try again.");
-    //     }, 1000);
-    //   }
-    // } catch (error) {
-    //   toast.dismiss(loadingToastId);
-    //   toast.error("Something went wrong. Please try again.", error);
-    // }
+      if (result) {
+        setTimeout(() => {
+          toast.dismiss(loadingToastId);
+          toast.success("Profile submitted successfully!");
+          console.log("Form submitted:", formData);
+          setSubmitted(true);
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          toast.dismiss(loadingToastId);
+          toast.error("Something went wrong. Please try again.");
+        }, 1000);
+      }
+    } catch (error) {
+      toast.dismiss(loadingToastId);
+      toast.error("Something went wrong. Please try again.", error);
+    }
   };
 
   if (!isLoggedIn)

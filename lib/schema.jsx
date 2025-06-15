@@ -8,7 +8,6 @@ export const Users = pgTable("users", {
   username: varchar("username"),
   gender: varchar("gender"),
   dob: varchar("dob"),
-  // weeksLived: varchar("weeksLived"),
   bio: varchar("bio"),
   location: varchar("location"),
   linkedInUrl: varchar("linkedInUrl"),
