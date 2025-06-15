@@ -1,12 +1,15 @@
 import React, { use, useEffect, useState } from "react";
-import {
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-} from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
+import AnniversaryList from "./AnniversaryList";
 
-const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, refreshData }) => {
+const TimelineView = ({
+  selectedYear,
+  onYearChange,
+  onEventClick,
+  timelineData,
+  refreshData,
+}) => {
   const [hoveredWeek, setHoveredWeek] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
 
@@ -78,7 +81,7 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, 
   return (
     <div className="space-y-8">
       {/* Timeline Container */}
-      <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-xl p-8">
+      <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border-4 border-blue-600 dark:border-blue-300 shadow-xl p-8">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 pb-6 border-b border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center gap-4 mb-6 lg:mb-0">
@@ -89,7 +92,7 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, 
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full border-2 border-white dark:border-slate-800"></div>
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-slate-800 dark:text-white mb-1">
+              <h2 className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
                 Timeline View
               </h2>
               <p className="text-slate-600 dark:text-slate-400 font-light">
@@ -173,7 +176,7 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, 
         </div>
 
         {/* Week Grid */}
-        <div className="relative p-6 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-900/50 rounded-xl border border-slate-200/30 dark:border-slate-700/30 backdrop-blur-sm shadow-inner">
+        <div className="relative p-6 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-900/50 rounded-xl border border-blue-600 dark:border-blue-300 backdrop-blur-sm shadow-inner">
           <div className="grid grid-cols-12 gap-2">
             {Array.from({ length: 12 }, (_, monthIndex) => (
               <div key={monthIndex} className="flex flex-col gap-1.5">
@@ -214,7 +217,7 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, 
 
                           {/* Hover tooltip */}
                           {hoveredWeek === weekNumber && (
-                            <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 opacity-100 transition-all duration-300 z-30 pointer-events-none">
+                            <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 opacity-100 transition-all duration-300 z-200 pointer-events-none">
                               <div className="bg-slate-900 dark:bg-slate-700 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-slate-700 dark:border-slate-600 backdrop-blur-sm min-w-48 max-w-64">
                                 <div className="font-semibold mb-1">
                                   Week {weekNumber} • {weekEvents.length} event
@@ -342,9 +345,10 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, 
               {currentYearEvents.map((event, index) => (
                 <div
                   key={index}
-                  className="group relative overflow-hidden bg-white/80 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200/50 dark:border-slate-600/50 hover:border-slate-300/50 dark:hover:border-slate-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-slate-200/20 dark:hover:shadow-slate-900/20 backdrop-blur-sm transform hover:-translate-y-1 cursor-pointer"
+                  className="group form-layout transform hover:-translate-y-1 cursor-pointer"
                   onClick={() => onEventClick(event.id)}
                 >
+                  <FormBackgroundEffect />
                   <div className="flex items-start gap-3">
                     <div
                       className={`relative p-2.5 bg-gradient-to-br ${event.color} rounded-lg shadow-md shadow-slate-200/20 dark:shadow-slate-900/20 group-hover:scale-110 transition-transform duration-300`}
@@ -398,6 +402,7 @@ const TimelineView = ({ selectedYear, onYearChange, onEventClick, timelineData, 
             </div>
           )}
         </div>
+        <AnniversaryList selectedYear={selectedYear} />
       </div>
 
       {/* Year Navigation Dots */}

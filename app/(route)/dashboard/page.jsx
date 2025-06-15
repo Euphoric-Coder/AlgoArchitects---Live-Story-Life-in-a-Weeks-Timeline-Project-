@@ -222,7 +222,7 @@ const page = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2">
+          <h1 className="font-bold text-4xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
             Your Life Timeline
           </h1>
           <p className="text-slate-600 dark:text-slate-400 font-light">
