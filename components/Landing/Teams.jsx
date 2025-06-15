@@ -16,7 +16,7 @@ const Teams = () => {
       },
     },
     {
-      name: "Emily Watson",
+      name: "Anurag Sharma",
       role: "Head of Design & Frontend Animations",
       bio: "UX/UI designer with a focus on meaningful interactions. Former design lead at Figma, crafting beautiful user experiences.",
       image:
