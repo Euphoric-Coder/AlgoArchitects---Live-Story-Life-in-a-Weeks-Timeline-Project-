@@ -91,7 +91,7 @@ cd AlgoArchitects---Live-Story-Life-in-a-Weeks-Timeline-Project-
 npm install --force (Use force if using React 19)
 
 # 3. Set up environment variables
-touch .env 
+touch .env
 touch .env.local
 # Fill in this to .env and .env.local files:
 # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
