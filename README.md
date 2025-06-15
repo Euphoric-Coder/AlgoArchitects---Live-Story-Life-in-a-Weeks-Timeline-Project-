@@ -92,9 +92,9 @@ npm install --force (Use force if using React 19)
 # 3. Set up environment variables
 touch .env 
 touch .env.local
-# Fill in:
+# Fill in this to .env files:
 # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-#CLERK_SECRET_KEY=
+#CLERK_SECRET_KEY
 #NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 #NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 #NEXT_PUBLIC_CLERK_SIGN_IN_FORCE_REDIRECT_URL=/onboarding
@@ -108,3 +108,7 @@ touch .env.local
 
 # 4. Run the development server
 npm run dev
+```
+
+```bash
+```
