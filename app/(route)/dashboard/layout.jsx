@@ -15,6 +15,8 @@ import {
   Zap,
 } from "lucide-react";
 import Image from "next/image";
+import { SignOutButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardLayout({ children }) {
   const [isDark, setIsDark] = useState(false);
@@ -127,12 +129,14 @@ export default function DashboardLayout({ children }) {
                 )}
               </button>
 
-              <button
-                onClick={() => router.push("/")}
-                className="flex-1 p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors duration-200 flex items-center justify-center"
-              >
-                <LogOut className="w-4 h-4 text-slate-600 dark:text-slate-300" />
-              </button>
+              <SignOutButton asChild>
+                <Button
+                  onClick={() => router.push("/")}
+                  className="flex-1 p-2 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors duration-200 flex items-center justify-center"
+                >
+                  <LogOut className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                </Button>
+              </SignOutButton>
             </div>
           </div>
         </div>

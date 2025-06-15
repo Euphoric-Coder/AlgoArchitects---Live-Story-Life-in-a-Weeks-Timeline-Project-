@@ -41,7 +41,6 @@ const Page = () => {
     bio: "",
     linkedInUrl: "",
     websites: [],
-    aboutMe: {},
 
     isOnboarded: false,
   });

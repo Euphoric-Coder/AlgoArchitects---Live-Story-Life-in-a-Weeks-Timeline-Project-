@@ -1,9 +1,126 @@
-import React from 'react'
+"use client";
+
+import BasicInfoSection from "@/components/Form/BasicInfoSection";
+import CommonFieldsSection from "@/components/Form/CommonFieldsSection";
+import { useUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  const { user, isSignedIn } = useUser();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [onboarded, setOnboarded] = useState(false);
+  const [willSkip, setWillSkip] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    profileImage: "",
+    gender: "",
+    dob: "",
+    weeksLived: "",
+    age: "",
+    location: "",
+    bio: "",
+    linkedInUrl: "",
+    websites: [],
 
-export default page
+    isOnboarded: false,
+  });
+
+  const [formErrors, setFormErrors] = useState({});
+
+  useEffect(() => {
+    const checkUser = async () => {
+      if (!user) return;
+
+      const result = await fetch("/api/add-user");
+      const resp = await result.json();
+
+      let weeksLived = "";
+      let age = "";
+
+      if (resp.dob) {
+        const dobDate = new Date(resp.dob);
+        const today = new Date();
+
+        const msInWeek = 1000 * 60 * 60 * 24 * 7;
+        weeksLived = Math.floor((today - dobDate) / msInWeek);
+
+        let years = today.getFullYear() - dobDate.getFullYear();
+        let months = today.getMonth() - dobDate.getMonth();
+        let days = today.getDate() - dobDate.getDate();
+
+        if (days < 0) {
+          months -= 1;
+          days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+        }
+        if (months < 0) {
+          years -= 1;
+          months += 12;
+        }
+
+        age = `${years} years ${months} months ${days} days`;
+      }
+
+      setFormData({
+        fullName: user.fullName || "",
+        email: user.primaryEmailAddress?.emailAddress || "",
+        profileImage: user.imageUrl || "",
+        gender: resp.gender || "",
+        dob: resp.dob || "", // no fallback
+        weeksLived,
+        age,
+        location: resp.location || "",
+        bio: resp.bio || "",
+        linkedInUrl: resp.linkedInUrl || "",
+        websites: resp.websites || [],
+        isOnboarded: resp.isOnboarded || false,
+      });
+
+      setIsLoggedIn(!!resp.userAdded);
+      setOnboarded(!!resp.isOnboarded);
+    };
+
+    if (isSignedIn && user) {
+      checkUser();
+    }
+  }, [isSignedIn, user]);
+  
+
+  const handleChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+  };
+
+  console.log(formData)
+
+  return (
+    <div>
+      <div className="flex flex-col gap-4">
+      <BasicInfoSection
+        fullName={formData.fullName}
+        email={formData.email}
+        profileImage={formData.profileImage}
+        user={user}
+      />
+      {/* <CommonFieldsSection
+        formState={formData}
+        formErrors={formErrors}
+        handleChange={handleChange}
+        willSkip={willSkip}
+      /> */}
+      </div>
+    </div>
+  );
+};
+
+export default page;
