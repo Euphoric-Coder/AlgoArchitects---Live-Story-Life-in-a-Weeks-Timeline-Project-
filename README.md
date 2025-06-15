@@ -60,7 +60,7 @@ Time passes faster than we realize. Most people live over **4,000 weeks**, but r
 | Layer           | Technology                     |
 |----------------|---------------------------------|
 | Framework       | **Next.js** (React 18, App Router and Used API routes for backend handling) |
-| Styling         | **Tailwind CSS**, responsive utility-first design |
+| Styling         | **Tailwind CSS**, responsive utility-first design, **ShadCN UI** |
 | Auth & Profile  | **clerk.com** for modern identity management |
 | ORM             | **Drizzle ORM** for type-safe, schema-driven PostgreSQL |
 | Database        | **PostgreSQL** hosted on **NeonDB** |
@@ -92,7 +92,7 @@ npm install --force (Use force if using React 19)
 # 3. Set up environment variables
 touch .env 
 touch .env.local
-# Fill in this to .env files:
+# Fill in this to .env and .env.local files:
 # NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 #CLERK_SECRET_KEY
 #NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
