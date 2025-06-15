@@ -18,7 +18,7 @@ import * as React from "react";
 const WEBSITE_URL = process.env.NEXT_PUBLIC_WEBSITE;
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
 
-export default function LifeInWeeksWelcomeEmail({ username = "Explorer" }) {
+export default function LiveStoryWelcomeEmail({ username = "Explorer" }) {
   return (
     <Html>
       <Head />

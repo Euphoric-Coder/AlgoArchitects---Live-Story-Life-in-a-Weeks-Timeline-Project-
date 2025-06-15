@@ -3,6 +3,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { Users } from "@/lib/schema";
 import { db } from "@/lib/dbConfig";
+import { sendEmail } from "@/lib/sendEmail";
+import LiveStoryWelcomeEmail from "@/emails/WelcomeEmail";
 
 // Add user to DB
 export async function GET() {
@@ -25,6 +27,17 @@ export async function GET() {
         fullName: fullName,
         email: email,
         profileImage: profileImage,
+      });
+
+      // Send Welcome Email
+      await sendEmail({
+        from: "Live Story Team <onboarding@resend.dev>",
+        to: email,
+        subject:
+          "Welcome to Live Story! Your timeline begins now",
+        react: LiveStoryWelcomeEmail({
+          username: user.firstName.split(" ")[0],
+        }),
       });
     }
 
