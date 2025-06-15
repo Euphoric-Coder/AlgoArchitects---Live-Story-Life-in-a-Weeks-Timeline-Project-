@@ -6,6 +6,7 @@ import Hero from "@/components/Landing/Hero";
 import HowItWorks from "@/components/Landing/HowItWorks";
 import Navbar from "@/components/Landing/Navbar";
 import Preview from "@/components/Landing/Preview";
+import Teams from "@/components/Landing/Teams";
 import WhyThisMatters from "@/components/Landing/WhyThisMatters";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -21,6 +22,7 @@ const page = () => {
       <Features />
       <Preview />
       <HowItWorks />
+      <Teams />
       <CallToAction onGetStarted={() => navigate.push("/sign-in")} />
     </div>
   );

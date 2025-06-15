@@ -51,7 +51,7 @@ const Navbar = ({ onGetStarted }) => {
               height={48}
               className=""
             />
-            <span className="text-xl font-medium text-slate-800 dark:text-white tracking-tight">
+            <span className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
               Live Story
             </span>
           </div>
@@ -99,19 +99,13 @@ const Navbar = ({ onGetStarted }) => {
             </button>
 
             {isSignedIn ? (
-              <SignOutButton aschild>
-                <Button
-                  onClick={onGetStarted}
-                  className="btn3"
-                >
+              <SignOutButton>
+                <Button onClick={onGetStarted} className="btn3">
                   Sign Out
                 </Button>
               </SignOutButton>
             ) : (
-              <Button
-                onClick={onGetStarted}
-                className="btn3"
-              >
+              <Button onClick={onGetStarted} className="btn3">
                 Get Started
               </Button>
             )}
