@@ -18,6 +18,7 @@ Whether you're reflecting on your journey, planning ahead, or simply curious abo
 - [📁 Project Structure](#-project-structure)
 - [📄 Timeline Export](#-timeline-export)
 - [🤝 Contributors](#-contributors)
+- [📄 PowerPoint Presentation](#-contributors)
 
 
 ---
@@ -110,8 +111,15 @@ touch .env.local
 npm run dev
 ```
 
-```bash
-```
+
+
+## 📁 Project Structure
+![Project Structure](/PROJECT%20STRUCTURE.png)
+
+## 📄 PowerPoint Presentation
+[PPT File](https://github.com/Euphoric-Coder/AlgoArchitects---Live-Story-Life-in-a-Weeks-Timeline-Project-/blob/main/Live%20Story%20(SD-2%20Life%20in%20Weeks%20Timeline)%20Presentation.pptx)
+
+
 
 
 ## 🤝 Contributors
