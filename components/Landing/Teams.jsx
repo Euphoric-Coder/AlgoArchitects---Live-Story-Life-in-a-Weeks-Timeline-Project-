@@ -5,39 +5,39 @@ const Teams = () => {
   const teamMembers = [
     {
       name: "Sushmita S",
-      role: "Strategy and Planning Lead",
-      bio: "Former Google PM with 8+ years building user-centric products. Passionate about helping people visualize their life stories.",
+      role: "Strategy and Planning",
+      bio: "Founder of Sush boss Website management & data analyst. Responsible for strategic planning and project management. Skilled in project management, data analysis, and website development.",
       image: "/Sushmita.png",
       social: {
-        linkedin: "#",
+        linkedin:
+          "https://www.linkedin.com/in/sushmitha-s-999b02317?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
         twitter: "#",
-        github: "#",
-        email: "sarah@lifetimeline.com",
+        github: "https://github.com/Sushmithas747",
+        email: "Sushmithas2190@gmail.com",
       },
     },
     {
       name: "Anurag Sharma",
-      role: "Head of Design & Frontend Animations",
-      bio: "UX/UI designer with a focus on meaningful interactions. Former design lead at Figma, crafting beautiful user experiences.",
-      image:
-        "/Anurag.png",
+      role: "Responsible for Design & Frontend Animations",
+      bio: "UI/UX designer and Frontend Developer with a focus on meaningful interactions. Skilled in crafting seamless digital experiences through intuitive UI/UX design, responsive front-end development,",
+      image: "/Anurag.png",
       social: {
-        linkedin: "#",
+        linkedin: "https://www.linkedin.com/in/anurag-sharma-42a080307/",
         twitter: "#",
-        github: "#",
-        email: "emily@lifetimeline.com",
+        github: "https://github.com/AnuragSharma-11",
+        email: "anuragsharma.bharat11@gmail.com",
       },
     },
     {
       name: "Sagnik Dey",
-      role: "Lead Developer (Frontend and Backend)",
-      bio: "Full-stack engineer specializing in React and Node.js. Previously at Stripe, building scalable timeline infrastructure.",
+      role: "Full Stack Developer (MERN & NextJS)",
+      bio: "Full-stack engineer specializing in React and Node.js and NextJS. Previously at Rouge Internationals, building scalable timeline infrastructure.",
       image: "/Sagnik.png",
       social: {
-        linkedin: "#",
+        linkedin: "https://www.linkedin.com/in/sagnik-dey475",
         twitter: "#",
-        github: "#",
-        email: "marcus@lifetimeline.com",
+        github: "https://github.com/Euphoric-Coder",
+        email: "deydsagnik48@gmail.com",
       },
     },
   ];
@@ -102,18 +102,14 @@ const Teams = () => {
               <div className="flex justify-center gap-3">
                 <a
                   href={member.social.linkedin}
+                  target="_blank"
                   className="p-2 rounded-lg bg-slate-50/80 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110"
                 >
                   <Linkedin className="w-4 h-4" />
                 </a>
                 <a
-                  href={member.social.twitter}
-                  className="p-2 rounded-lg bg-slate-50/80 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-110"
-                >
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a
                   href={member.social.github}
+                  target="_blank"
                   className="p-2 rounded-lg bg-slate-50/80 dark:bg-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all duration-200 hover:scale-110"
                 >
                   <Github className="w-4 h-4" />
@@ -127,43 +123,6 @@ const Teams = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-24 pt-16 border-t border-slate-200/20 dark:border-white/10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2 tracking-tight">
-                15+
-              </div>
-              <div className="text-sm text-slate-500 dark:text-slate-400 font-medium tracking-wide">
-                Years Combined
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2 tracking-tight">
-                50K+
-              </div>
-              <div className="text-sm text-slate-500 dark:text-slate-400 font-medium tracking-wide">
-                Users Helped
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2 tracking-tight">
-                24/7
-              </div>
-              <div className="text-sm text-slate-500 dark:text-slate-400 font-medium tracking-wide">
-                Support
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2 tracking-tight">
-                100%
-              </div>
-              <div className="text-sm text-slate-500 dark:text-slate-400 font-medium tracking-wide">
-                Dedicated
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
