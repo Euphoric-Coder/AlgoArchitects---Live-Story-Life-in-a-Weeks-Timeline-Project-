@@ -4,11 +4,10 @@ import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 const Teams = () => {
   const teamMembers = [
     {
-      name: "Sarah Chen",
-      role: "Founder & CEO",
+      name: "Sushmita S",
+      role: "Strategy and Planning Lead",
       bio: "Former Google PM with 8+ years building user-centric products. Passionate about helping people visualize their life stories.",
-      image:
-        "https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=400",
+      image: "/Sushmita.png",
       social: {
         linkedin: "#",
         twitter: "#",
@@ -17,24 +16,11 @@ const Teams = () => {
       },
     },
     {
-      name: "Marcus Rodriguez",
-      role: "Lead Developer",
-      bio: "Full-stack engineer specializing in React and Node.js. Previously at Stripe, building scalable timeline infrastructure.",
-      image:
-        "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
-      social: {
-        linkedin: "#",
-        twitter: "#",
-        github: "#",
-        email: "marcus@lifetimeline.com",
-      },
-    },
-    {
       name: "Emily Watson",
-      role: "Head of Design",
+      role: "Head of Design & Frontend Animations",
       bio: "UX/UI designer with a focus on meaningful interactions. Former design lead at Figma, crafting beautiful user experiences.",
       image:
-        "https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=400",
+        "/Anurag.png",
       social: {
         linkedin: "#",
         twitter: "#",
@@ -43,16 +29,15 @@ const Teams = () => {
       },
     },
     {
-      name: "David Kim",
-      role: "Data Engineer",
-      bio: "Specializes in data visualization and analytics. PhD in Computer Science, ensuring your timeline data is secure and insightful.",
-      image:
-        "https://images.pexels.com/photos/3778876/pexels-photo-3778876.jpeg?auto=compress&cs=tinysrgb&w=400",
+      name: "Sagnik Dey",
+      role: "Lead Developer (Frontend and Backend)",
+      bio: "Full-stack engineer specializing in React and Node.js. Previously at Stripe, building scalable timeline infrastructure.",
+      image: "/Sagnik.png",
       social: {
         linkedin: "#",
         twitter: "#",
         github: "#",
-        email: "david@lifetimeline.com",
+        email: "marcus@lifetimeline.com",
       },
     },
   ];
@@ -85,7 +70,7 @@ const Teams = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
           {teamMembers.map((member, index) => (
             <div
               key={index}
