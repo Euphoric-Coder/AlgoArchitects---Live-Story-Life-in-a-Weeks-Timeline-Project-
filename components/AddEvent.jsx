@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { Calendar, Tag, FileText, Link, Upload, Image, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { PenBox, Plus, X } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -23,9 +23,26 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
 import ImageUpload from "./ImageUpload";
-import { useUser } from "@clerk/nextjs";
+import NextImage from "next/image";
 
-const AddEvent = ({ onSubmit }) => {
+const AddEvent = ({
+  onSubmit,
+  isEditing = false,
+  data = {
+    title: "",
+    date: "",
+    year: "",
+    week: "",
+    type: "personal",
+    description: "",
+    notes: "",
+    links: [""],
+    coverImage: null,
+    coverImageId: null,
+    icon: "Users",
+    color: "from-rose-500 to-rose-600",
+  },
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [uploadData, setUploadData] = useState(null);
   const [fileId, setFileId] = useState(null);
@@ -38,11 +55,22 @@ const AddEvent = ({ onSubmit }) => {
     description: "",
     notes: "",
     links: [""],
-    coverImage: "",
-    coverImageId: "",
+    coverImage: null,
+    coverImageId: null,
     icon: "Users",
-    color: "from-blue-500 to-blue-600",
+    color: "from-rose-500 to-rose-600",
   });
+
+  useEffect(() => {
+    if (isEditing && data) {
+      setFormData({
+        ...data,
+        links: Array.isArray(data.links) ? data.links : [""],
+      });
+      setUploadData(data.coverImage || null);
+      setFileId(data.coverImageId || null);
+    }
+  }, [isEditing, data]);
 
   const categories = [
     {
@@ -83,12 +111,26 @@ const AddEvent = ({ onSubmit }) => {
     },
   ];
 
+  const deleteFile = async (fileId) => {
+    if (!fileId) return;
+    console.log("Deleting file with ID:", fileId);
+    try {
+      await fetch("/api/delete-image", {
+        method: "POST",
+        body: JSON.stringify({ fileId }),
+      });
+      console.log("Deleted previous file:", fileId);
+    } catch (err) {
+      console.error("Delete failed", err);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const submittedData = {
       ...formData,
-      coverImage: uploadData?.url || "",
-      coverImageId: fileId || "",
+      coverImage: uploadData?.url || null,
+      coverImageId: fileId || null,
     };
 
     onSubmit(submittedData);
@@ -128,14 +170,26 @@ const AddEvent = ({ onSubmit }) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="btn9">+ Add Event</Button>
+        <Button className="btn9 flex items-center gap-2 [&_svg]:size-6">
+          {isEditing ? (
+            <>
+              <PenBox />
+              Edit Event
+            </>
+          ) : (
+            <>
+              <Plus />
+              Add New Event
+            </>
+          )}
+        </Button>
       </DialogTrigger>
 
       <DialogContent className="max-h-[90vh] overflow-y-auto border-2 border-blue-200 bg-gradient-to-b from-cyan-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700 shadow-2xl">
         <FormBackgroundEffect />
         <DialogHeader>
           <DialogTitle className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 dark:from-blue-400 dark:via-indigo-400 dark:to-cyan-400">
-            Add New Event
+            {isEditing ? "Edit Event" : "Add New Event"}
           </DialogTitle>
           <DialogDescription className="text-gray-600 dark:text-gray-400 mt-4">
             Fill out the form to record a new personal or global event.
@@ -149,7 +203,7 @@ const AddEvent = ({ onSubmit }) => {
                 htmlFor="title"
                 className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
               >
-                Category
+                Title
               </label>
               <Input
                 id="title"
@@ -168,7 +222,7 @@ const AddEvent = ({ onSubmit }) => {
                 htmlFor="dt"
                 className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
               >
-                Category
+                Date
               </label>
               <Input
                 id="dt"
@@ -199,8 +253,6 @@ const AddEvent = ({ onSubmit }) => {
                     months += 12;
                   }
 
-                  const ageString = `${years} years ${months} months ${days} days`;
-
                   // --- Weeks since 1st Jan of selected year ---
                   const startOfYear = new Date(
                     selectedDate.getFullYear(),
@@ -212,9 +264,6 @@ const AddEvent = ({ onSubmit }) => {
                     Math.floor((selectedDate - startOfYear) / msInWeek) + 1;
 
                   const year = selectedDate.getFullYear();
-
-                  console.log("Age:", ageString);
-                  console.log("Week:", week, "Year:", year);
 
                   setFormData({
                     ...formData,
@@ -305,7 +354,7 @@ const AddEvent = ({ onSubmit }) => {
             <textarea
               id="add-notes"
               rows={2}
-              value={formData.notes}
+              value={formData.notes || ""}
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
               }
@@ -314,32 +363,63 @@ const AddEvent = ({ onSubmit }) => {
             />
           </div>
 
-          {/* <div>
-            <label className="flex items-center gap-2 text-sm font-medium">
-              <Image className="w-4 h-4" /> Cover Image URL
-            </label>
-            <Input
-              type="url"
-              value={formData.coverImage}
-              onChange={(e) =>
-                setFormData({ ...formData, coverImage: e.target.value })
-              }
-              placeholder="https://example.com/image.jpg"
+          {isEditing && formData.coverImage ? (
+            <div className="mb-6">
+              <label
+                htmlFor="blog-cover-image"
+                className="text-lg font-semibold text-blue-100 bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105"
+              >
+                Blog Cover Image
+              </label>
+              <div className="relative flex flex-col items-center gap-6 mt-4 p-6 border-2 border-dashed border-blue-300 rounded-2xl bg-gradient-to-br from-cyan-50 to-indigo-100 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="flex-1 max-w-md overflow-hidden rounded-xl shadow-md transition-transform duration-300 hover:scale-105">
+                  <NextImage
+                    src={formData.coverImage}
+                    alt="Blog Cover"
+                    width={500}
+                    height={500}
+                    className="w-full h-[300px] object-cover rounded-xl"
+                    draggable={false}
+                  />
+                </div>
+                <div className="flex flex-col gap-3 justify-center items-center w-full md:w-auto md:items-start text-center md:text-left">
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">
+                    Cover Image Uploaded
+                  </h3>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      deleteFile(formData.coverImageId);
+                      setFormData({
+                        ...formData,
+                        coverImage: null,
+                        coverImageId: null,
+                      });
+                      setUploadData(null);
+                      setFileId(null);
+                    }}
+                    className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 text-white font-medium px-5 py-2 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform duration-300"
+                  >
+                    Reupload Image
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <ImageUpload
+              uploadData={uploadData}
+              setUploadData={setUploadData}
+              fileId={fileId}
+              setFileId={setFileId}
             />
-          </div> */}
-          <ImageUpload
-            uploadData={uploadData}
-            setUploadData={setUploadData}
-            fileId={fileId}
-            setFileId={setFileId}
-          />
+          )}
 
           <div>
             <label className="text-md font-semibold text-blue-100 dark:text-white bg-gradient-to-r from-blue-500 via-indigo-400 to-purple-500 dark:from-blue-600 dark:via-indigo-500 dark:to-purple-700 px-3 py-1 rounded-full shadow-md transform -translate-y-12 -translate-x-1/5 transition-all duration-300 ease-in-out z-20 cursor-pointer hover:scale-105">
               Related Links
             </label>
             <div className="space-y-2">
-              {formData.links.map((link, index) => (
+              {(formData.links || [""]).map((link, index) => (
                 <div key={index} className="flex gap-2 mt-3">
                   <Input
                     type="url"
@@ -348,7 +428,7 @@ const AddEvent = ({ onSubmit }) => {
                     placeholder="https://example.com"
                     className="input-field focus-visible:ring-blue-500 dark:focus-visible:ring-blue-400 focus-visible:ring-[3px] flex-1"
                   />
-                  {formData.links.length > 1 && (
+                  {(formData.links || [""]).length > 1 && (
                     <Button
                       type="button"
                       onClick={() => removeLink(index)}
@@ -370,41 +450,7 @@ const AddEvent = ({ onSubmit }) => {
             </div>
           </div>
 
-          {/* <div>
-            <label className="flex items-center gap-2 text-sm font-medium">
-              <Upload className="w-4 h-4" /> File Attachments
-            </label>
-            <div
-              className={`relative border-2 border-dashed p-6 rounded-xl ${
-                dragActive ? "border-blue-400 bg-blue-50" : "border-slate-300"
-              }`}
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-            >
-              <div className="text-center">
-                <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-sm">
-                  Drag and drop files here, or click to select
-                </p>
-                <p className="text-xs text-slate-500">
-                  Supports images, documents, and more
-                </p>
-              </div>
-              <input
-                type="file"
-                multiple
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                onChange={(e) => {
-                  if (e.target.files)
-                    console.log("Files selected:", e.target.files);
-                }}
-              />
-            </div>
-          </div> */}
-
-          <DialogFooter className="mt-6">
+          <DialogFooter className="flex gap-3 mt-6">
             <DialogClose asChild>
               <Button
                 onClick={() => setIsOpen(false)}
@@ -414,7 +460,7 @@ const AddEvent = ({ onSubmit }) => {
               </Button>
             </DialogClose>
             <Button type="submit" className="w-full btn4">
-              Add Event
+              {isEditing ? "Update Event" : "Add Event"}
             </Button>
           </DialogFooter>
         </form>

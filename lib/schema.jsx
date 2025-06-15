@@ -27,6 +27,8 @@ export const Events = pgTable("events", {
   type: varchar("type").notNull(),
   title: varchar("title").notNull(),
   description: varchar("description"),
+  coverImage: varchar("coverImage"),
+  coverImageId: varchar("coverImageId"),
   notes: varchar("notes"),
   icon: varchar("icon"),
   color: varchar("color"),

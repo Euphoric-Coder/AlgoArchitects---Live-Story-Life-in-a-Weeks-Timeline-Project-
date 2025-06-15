@@ -518,7 +518,7 @@ const Events = () => {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2">
+          <h1 className="font-bold text-4xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
             All Events
           </h1>
           <p className="text-slate-600 dark:text-slate-400 font-light">
@@ -717,7 +717,9 @@ const Events = () => {
                     <div
                       key={event.id}
                       className="group form-layout cursor-pointer hover:scale-[1.01] transition-all duration-300"
-                      onClick={() => navigate.push(`/event/${event.id}`)}
+                      onClick={() =>
+                        navigate.push(`/dashboard/event/${event.id}`)
+                      }
                     >
                       <div className="flex items-start gap-4">
                         {/* Event Icon */}
@@ -744,7 +746,7 @@ const Events = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  navigate.push(`/event/${event.id}`);
+                                  navigate.push(`/dashboard/event/${event.id}`);
                                 }}
                                 className="p-2 rounded-lg bg-white/70 dark:bg-slate-600/50 hover:bg-white dark:hover:bg-slate-600 border border-slate-200/50 dark:border-slate-500/50 hover:border-slate-300/50 dark:hover:border-slate-400/50 transition-all duration-200 opacity-0 group-hover:opacity-100"
                               >

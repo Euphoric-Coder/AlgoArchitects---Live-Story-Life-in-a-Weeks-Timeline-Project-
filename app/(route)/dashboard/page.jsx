@@ -61,6 +61,20 @@ const page = () => {
     processTimelineData();
   }, [userData, eventData]);
 
+  // useEffect(() => {
+  //   if (!userData) return; // wait for data to load
+
+  //   if (userData?.[0]?.hasOnboarded === true) {
+  //     console.log("hasOnboarded", userData[0].hasOnboarded);
+  //   } else {
+  //     console.log("hasOnboarded", userData?.[0]?.hasOnboarded);
+  //     router.push("/onboarding");
+  //   }
+  // }, [ userData]);
+  
+
+
+
   useEffect(() => {
     const retrieveHistoricalEvents = async () => {
       const userData = await db
@@ -190,6 +204,8 @@ const page = () => {
         type: eventData.type,
         title: eventData.title,
         description: eventData.description,
+        coverImage: eventData.coverImage,
+        coverImageId: eventData.coverImageId,
         notes: eventData.notes,
         icon: eventData.icon,
         color: eventData.color,
@@ -203,7 +219,19 @@ const page = () => {
 
   return (
     <div>
-      <AddEvent onSubmit={handleAddEvent} />
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-white mb-2">
+            Your Life Timeline
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400 font-light">
+            Every week of your journey, beautifully visualized
+          </p>
+        </div>
+
+        <AddEvent onSubmit={handleAddEvent} />
+      </div>
 
       <TimelineView
         selectedYear={selectedYear}

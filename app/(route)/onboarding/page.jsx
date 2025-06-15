@@ -134,7 +134,13 @@ const Page = () => {
     // }
   };
 
-  if (!isLoggedIn) return <div>Please sign in again to continue.</div>;
+  if (!isLoggedIn)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="animate-pulse text-blue-500 text-lg">Loading...</span>
+      </div>
+    );
+
   if (onboarded && isLoggedIn)
     return (
       <div>
@@ -288,13 +294,18 @@ const Page = () => {
                     <ul className="list-disc pl-5 space-y-1 text-gray-800 dark:text-gray-100">
                       {formData.websites.map((site, idx) => (
                         <li key={idx}>
+                          <span className="font-medium">{site.name}: </span>
                           <a
-                            href={site}
+                            href={
+                              site.url.startsWith("http")
+                                ? site.url
+                                : `https://${site.url}`
+                            }
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-600 dark:text-blue-300 hover:underline break-words"
                           >
-                            {site}
+                            {site.url}
                           </a>
                         </li>
                       ))}
@@ -399,10 +410,7 @@ const Page = () => {
               Proceed to Submit
             </Button>
           ) : (
-            <Button
-              onClick={handleSubmit}
-              className="btn7"
-            >
+            <Button onClick={handleSubmit} className="btn7">
               Submit
             </Button>
           )}
