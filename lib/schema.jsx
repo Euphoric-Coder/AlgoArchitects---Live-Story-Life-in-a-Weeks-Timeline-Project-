@@ -5,7 +5,6 @@ export const Users = pgTable("users", {
   fullName: varchar("fullName").notNull(),
   email: varchar("email").notNull().unique(),
   profileImage: varchar("profileImage"),
-  username: varchar("username"),
   gender: varchar("gender"),
   dob: varchar("dob"),
   bio: varchar("bio"),
