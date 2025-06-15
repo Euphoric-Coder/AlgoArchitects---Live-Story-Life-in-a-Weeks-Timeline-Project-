@@ -130,14 +130,13 @@ npm run dev
 
 ---
 
-### 👤 [Shushmitha S](https://www.linkedin.com/in/sushmitha-s-999b02317/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app)
-- **Role**: Backend Developer
+### 👤 [Sushmitha S](https://www.linkedin.com/in/sushmitha-s-999b02317/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app)
 - **GitHub**: (https://github.com/Sushmithas747)
 
 ---
 
 ### 👤 [Anurag Sharma](https://www.linkedin.com/in/anurag-sharma-42a080307/)
-- **Role**: Backend Developer
+- **Role**: UI/UX and Frontend Developer
 - **GitHub**: (https://github.com/AnuragSharma-11)
 
 
