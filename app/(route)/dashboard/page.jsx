@@ -31,11 +31,12 @@ import ExportModal from "@/components/ExportModal";
 
 const page = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState([]);
   const [eventData, setEventData] = useState(null);
   const [historicalEvents, sethistoricalEvents] = useState([]);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [timelineData, setTimelineData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const { user } = useUser();
   const router = useRouter();
 
@@ -58,6 +59,7 @@ const page = () => {
 
   useEffect(() => {
     fetchUserData();
+    setIsLoaded(true);
   }, [user]);
 
   useEffect(() => {
@@ -177,6 +179,7 @@ const page = () => {
         return;
       }
 
+      console.log(userData)
       setUserData(userData);
       setEventData(eventData);
     } catch (error) {
@@ -216,6 +219,20 @@ const page = () => {
     refreshData();
     toast.success("Event added successfully!");
   };
+
+  if (!isLoaded)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="animate-pulse text-blue-500 text-lg">Loading...</span>
+      </div>
+    );
+
+  if (!userData?.dob && isLoaded)
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="animate-pulse text-blue-500 text-lg">DOB not given try again!</span>
+      </div>
+    );
 
   return (
     <div>
