@@ -227,7 +227,7 @@ const page = () => {
       </div>
     );
 
-  if (!userData?.dob && isLoaded)
+  if (!userData.dob && isLoaded)
     return (
       <div className="flex items-center justify-center h-full">
         <span className="animate-pulse text-blue-500 text-lg">DOB not given try again!</span>
