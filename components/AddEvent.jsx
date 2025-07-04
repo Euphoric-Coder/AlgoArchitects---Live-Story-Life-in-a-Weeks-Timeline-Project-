@@ -67,6 +67,8 @@ const AddEvent = ({
         ...data,
         links: Array.isArray(data.links) ? data.links : [""],
       });
+
+      console.log("Edited data:", data);
       setUploadData(data.coverImage || null);
       setFileId(data.coverImageId || null);
     }
@@ -127,30 +129,39 @@ const AddEvent = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    console.log(uploadData);
     const submittedData = {
       ...formData,
-      coverImage: uploadData?.url || null,
+      coverImage: isEditing
+        ? uploadData || null // when editing, uploadData is just a URL string
+        : uploadData?.url || null, // when not editing, uploadData is an object
       coverImageId: fileId || null,
     };
 
     onSubmit(submittedData);
-    setFormData({
-      title: "",
-      date: "",
-      year: "",
-      week: "",
-      type: "personal",
-      description: "",
-      notes: "",
-      links: [""],
-      coverImage: "",
-      coverImageId: "",
-      icon: "Users",
-      color: "from-rose-500 to-rose-600",
-    });
-    setIsOpen(false);
-    setUploadData(null);
-    setFileId(null);
+
+    // ✅ Reset only if not editing
+    if (!isEditing) {
+      setFormData({
+        title: "",
+        date: "",
+        year: "",
+        week: "",
+        type: "personal",
+        description: "",
+        notes: "",
+        links: [""],
+        coverImage: "",
+        coverImageId: "",
+        icon: "Users",
+        color: "from-rose-500 to-rose-600",
+      });
+      setUploadData(null);
+      setFileId(null);
+    }
+
+    setIsOpen(false); // ✅ Still close dialog either way
   };
 
   const addLink = () =>
@@ -411,6 +422,7 @@ const AddEvent = ({
               setUploadData={setUploadData}
               fileId={fileId}
               setFileId={setFileId}
+              isEditing={isEditing}
             />
           )}
 

@@ -59,6 +59,7 @@ export default function ImageUpload({
   setUploadData,
   fileId,
   setFileId,
+  isEditing,
 }) {
   const inputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -163,16 +164,16 @@ export default function ImageUpload({
         </>
       ) : (
         <>
-          <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-[#1b1b1b] dark:via-[#121212] dark:to-black shadow-xl space-y-6 transition-all duration-300">
+          <div className="p-2 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-[#1b1b1b] dark:via-[#121212] dark:to-black shadow-xl space-y-6 transition-all duration-300">
             {/* File Details + Actions */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 flex-wrap overflow-hidden">
               {/* File Info */}
-              <div className="space-y-1">
+              <div className="space-y-1 max-w-full md:max-w-md break-words">
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
                   File Uploaded Successfully
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                  <span className="font-medium text-gray-900 dark:text-gray-100 break-all">
                     {uploadData.name}
                   </span>
                 </p>
@@ -182,11 +183,11 @@ export default function ImageUpload({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 shrink-0">
                 <Button
                   type="button"
                   onClick={(e) => {
-                    e.stopPropagation(); // prevent bubbling up
+                    e.stopPropagation();
                     handleReset();
                   }}
                   className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 dark:from-blue-600 dark:via-purple-700 dark:to-pink-600 text-white font-medium px-5 py-2 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition-transform"
@@ -204,7 +205,11 @@ export default function ImageUpload({
               <div className="overflow-hidden rounded-2xl border-2 border-dashed border-blue-300 dark:border-purple-600 shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-md">
                 {uploadData.url && (
                   <Image
-                    src={uploadData.url}
+                    src={
+                      typeof uploadData === "string"
+                        ? uploadData
+                        : uploadData?.url || "/fallback.jpg"
+                    }
                     alt="Uploaded Cover"
                     width={1000}
                     height={400}

@@ -55,7 +55,7 @@ const EventDetail = () => {
         type: eventData.type,
         title: eventData.title,
         description: eventData.description,
-        coverImage: eventData.coverImage,
+        coverImage: eventData?.coverImage?.url || eventData?.coverImage || null,
         coverImageId: eventData.coverImageId,
         notes: eventData.notes,
         icon: eventData.icon,
@@ -78,7 +78,10 @@ const EventDetail = () => {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       // Here you would delete from backend
-      const result = await db.delete(Events).where(eq(Events.id, id)).returning();
+      const result = await db
+        .delete(Events)
+        .where(eq(Events.id, id))
+        .returning();
       toast.success("Event deleted successfully!");
       router.push("/dashboard");
       // refreshData();
@@ -115,6 +118,7 @@ const EventDetail = () => {
 
         <div className="flex items-center gap-2">
           <AddEvent onSubmit={handleAddEvent} data={eventData} isEditing />
+
           <Button
             className="del3 hover:bg-red-200 [&_svg]:size-6"
             onClick={handleDelete}
