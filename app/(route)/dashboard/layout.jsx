@@ -118,12 +118,14 @@ export default function DashboardLayout({ children }) {
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center gap-3 p-6 border-b border-slate-200/50 dark:border-slate-700/50">
-            <Image src={"/logo.png"} alt="logo" width={50} height={50} />
-            <span className="text-xl font-semibold text-slate-800 dark:text-white">
-              Life Timeline
-            </span>
-          </div>
+          <Link href={"/"}>
+            <div className="flex items-center gap-3 p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+              <Image src={"/logo.png"} alt="logo" width={50} height={50} />
+              <span className="text-xl font-semibold text-slate-800 dark:text-white">
+                Live Story
+              </span>
+            </div>
+          </Link>
 
           <nav className="flex-1 p-6 space-y-2">
             {navigation.map((item) => (
@@ -195,14 +197,16 @@ export default function DashboardLayout({ children }) {
               <Menu className="w-5 h-5 text-slate-600 dark:text-slate-300" />
             </button>
 
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-sm">
-                <Calendar className="w-5 h-5 text-white" />
+            <Link href={"/"}>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-sm">
+                  <Calendar className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-lg font-semibold text-slate-800 dark:text-white">
+                  Live Story
+                </span>
               </div>
-              <span className="text-lg font-semibold text-slate-800 dark:text-white">
-                Life Timeline
-              </span>
-            </div>
+            </Link>
 
             <div className="w-10"></div>
           </div>

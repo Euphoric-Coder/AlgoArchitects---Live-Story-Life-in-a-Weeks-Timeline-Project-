@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ModeToggle } from "@/components/theme-btn";
 import FormBackgroundEffect from "@/components/Effect/FormBackgroundEffect";
+import { Loader2Icon } from "lucide-react";
 
 const Page = () => {
   const { user, isSignedIn } = useUser();
@@ -108,14 +109,9 @@ const Page = () => {
     const loadingToastId = toast.loading("Submitting your profile...");
 
     try {
-      setFormData((prev) => ({
-        ...prev,
-        isOnboarded: true,
-      }));
-
       const result = await db
         .update(Users)
-        .set(formData)
+        .set({ ...formData, hasOnboarded: true })
         .where(eq(Users.email, formData.email))
         .returning();
 
@@ -140,15 +136,16 @@ const Page = () => {
 
   if (!isLoggedIn)
     return (
-      <div className="flex items-center justify-center h-full">
-        <span className="animate-pulse text-blue-500 text-lg">Loading...</span>
+      <div className="min-h-screen flex flex-col items-center justify-center h-full gap-2">
+        <Loader2Icon className="w-6 h-6 text-blue-500 animate-spin" />
+        <span className="text-sm font-medium text-blue-500">Loading...</span>
       </div>
     );
 
   if (onboarded && isLoggedIn)
     return (
       <div>
-        <RedirectPage redirectTo="/" userName={user.firstName} />
+        <RedirectPage redirectTo="/dashboard" userName={user.firstName} />
       </div>
     );
   if (submitted)
