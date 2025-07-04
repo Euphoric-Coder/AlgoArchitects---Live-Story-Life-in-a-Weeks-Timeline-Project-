@@ -17,11 +17,16 @@ import {
 import Image from "next/image";
 import { SignOutButton, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import { db } from "@/lib/dbConfig";
+import { Users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
 
 export default function DashboardLayout({ children }) {
   const { user } = useUser();
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [dobMissing, setDobMissing] = useState(false);
+  const [countdown, setCountdown] = useState(5);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -36,6 +41,43 @@ export default function DashboardLayout({ children }) {
       document.documentElement.classList.add("dark");
     }
   }, []);
+
+  useEffect(() => {
+    const checkDOB = async () => {
+      if (!user?.primaryEmailAddress?.emailAddress) return;
+
+      try {
+        const userData = await db
+          .select()
+          .from(Users)
+          .where(eq(Users.email, user?.primaryEmailAddress?.emailAddress));
+
+        if (!userData || !userData[0]?.dob) {
+          setDobMissing(true);
+        }
+      } catch (err) {
+        console.error("Error checking DOB:", err);
+      }
+    };
+
+    checkDOB();
+  }, [user]);
+
+  useEffect(() => {
+    if (!dobMissing) return;
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [dobMissing]);
+
+  useEffect(() => {
+    if (countdown === 0) {
+      router.push("/onboarding");
+    }
+  }, [countdown, router]);
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -104,7 +146,7 @@ export default function DashboardLayout({ children }) {
           <div className="p-6 border-t border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center gap-3 mb-4">
               <img
-                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400"
+                src={user?.imageUrl || "/default-avatar.jpg"}
                 alt="Profile"
                 className="w-10 h-10 rounded-full object-cover"
               />
@@ -166,7 +208,33 @@ export default function DashboardLayout({ children }) {
           </div>
         </div>
 
-        <main className="p-6 lg:p-8">{children}</main>
+        <main className="p-6 lg:p-8">
+          {dobMissing ? (
+            <div className="flex items-center justify-center min-h-[80vh]">
+              <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl rounded-2xl p-8 w-full max-w-md text-center space-y-4">
+                <h2 className="text-2xl font-semibold text-blue-600 dark:text-blue-400">
+                  Onboarding Incomplete
+                </h2>
+                <p className="text-slate-600 dark:text-slate-300">
+                  Redirecting you to onboarding in{" "}
+                  <span className="font-semibold">{countdown}</span> second
+                  {countdown !== 1 && "s"}...
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  If you're not redirected,
+                </p>
+                <Button
+                  onClick={() => router.push("/onboarding")}
+                  className="text-sm font-medium"
+                >
+                  Click here
+                </Button>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
+        </main>
       </div>
     </div>
   );

@@ -98,6 +98,11 @@ const Page = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.dob) {
+      toast.error("Date of Birth is required to submit the form.");
+      return;
+    }
+
     console.log("Submitted form data:", formData);
 
     const loadingToastId = toast.loading("Submitting your profile...");
@@ -382,28 +387,76 @@ const Page = () => {
                 Back
               </Button>
             )}
-            {willSkip && currentPage === 1 ? (
-              <Button
-                variant="ghost"
-                onClick={() => setWillSkip(false)}
-                className="rounded-full text-blue-700 dark:text-blue-400 hover:underline"
-              >
-                Revert to Filling
-              </Button>
-            ) : (
-              <Button
-                variant="ghost"
-                onClick={() => setskipAlert(true)}
-                className="rounded-full text-blue-700 dark:text-blue-400 hover:underline"
-              >
-                Skip for now
-              </Button>
-            )}
+            {currentPage === 1 &&
+              (willSkip ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => setWillSkip(false)}
+                  className="rounded-full text-blue-700 dark:text-blue-400 hover:underline"
+                >
+                  Revert to Filling
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setFormErrors({
+                      fullName: "",
+                      email: "",
+                      profileImage: "",
+                      gender: "",
+                      dob: "",
+                      weeksLived: "",
+                      age: "",
+                      location: "",
+                      bio: "",
+                      linkedInUrl: "",
+                      websites: [],
+
+                      isOnboarded: false,
+                    });
+                    setskipAlert(true);
+                  }}
+                  className="rounded-full text-blue-700 dark:text-blue-400 hover:underline"
+                >
+                  Skip for now
+                </Button>
+              ))}
           </div>
 
           {currentPage < 2 ? (
             <Button
-              onClick={() => setCurrentPage((prev) => prev + 1)}
+              onClick={() => {
+                const errors = {};
+
+                if (!willSkip) {
+                  if (!formData.dob) {
+                    errors.dob = "Date of Birth is required.";
+                  }
+                  if (!formData.gender) {
+                    errors.gender = "Gender is required.";
+                  }
+                  if (!formData.location) {
+                    errors.location = "Location is required.";
+                  }
+                  if (!formData.bio) {
+                    errors.bio = "Bio is required.";
+                  }
+
+                  toast.error(
+                    "Please fill the required fields or press the skip button!"
+                  );
+                }
+
+                // If there are errors, set them and prevent going to next page
+                if (Object.keys(errors).length > 0) {
+                  setFormErrors(errors);
+                  return;
+                }
+
+                // All good — go to page 2
+                setCurrentPage((prev) => prev + 1);
+              }}
               className="btn9"
             >
               Proceed to Submit
