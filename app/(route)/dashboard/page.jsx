@@ -77,33 +77,33 @@ const page = () => {
   //   }
   // }, [ userData]);
 
-  // useEffect(() => {
-  //   const retrieveHistoricalEvents = async () => {
-  //     const userData = await db
-  //       .select()
-  //       .from(UsersTable)
-  //       .where(eq(UsersTable.email, user?.primaryEmailAddress?.emailAddress));
+  useEffect(() => {
+    const retrieveHistoricalEvents = async () => {
+      const userData = await db
+        .select()
+        .from(UsersTable)
+        .where(eq(UsersTable.email, user?.primaryEmailAddress?.emailAddress));
 
-  //     setUserData(userData);
+      setUserData(userData);
 
-  //     const dob = userData[0]?.dob;
+      const dob = userData[0]?.dob;
 
-  //     if (dob) {
-  //       fetch("/historical_event.csv")
-  //         .then((res) => res.text())
-  //         .then((csvText) => {
-  //           const result = transformHistoricalEvents(
-  //             csvText,
-  //             user?.primaryEmailAddress?.emailAddress,
-  //             dob
-  //           );
-  //           sethistoricalEvents(result);
-  //         });
-  //     }
-  //   };
+      if (dob) {
+        fetch("/historical_event.csv")
+          .then((res) => res.text())
+          .then((csvText) => {
+            const result = transformHistoricalEvents(
+              csvText,
+              user?.primaryEmailAddress?.emailAddress,
+              dob
+            );
+            sethistoricalEvents(result);
+          });
+      }
+    };
 
-  //   retrieveHistoricalEvents();
-  // }, [user]);
+    retrieveHistoricalEvents();
+  }, [user]);
 
   useEffect(() => {
     // For seeding historical events initially
