@@ -2,7 +2,10 @@
 
 import BasicInfoSection from "@/components/Form/BasicInfoSection";
 import CommonFieldsSection from "@/components/Form/CommonFieldsSection";
+import { db } from "@/lib/dbConfig";
+import { Users } from "@/lib/schema";
 import { useUser } from "@clerk/nextjs";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -24,7 +27,7 @@ const page = () => {
     linkedInUrl: "",
     websites: [],
 
-    isOnboarded: false,
+    hasOnboarded: false,
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -33,8 +36,10 @@ const page = () => {
     const checkUser = async () => {
       if (!user) return;
 
-      const result = await fetch("/api/add-user");
+      const result = await fetch("/api/user-data");
       const resp = await result.json();
+
+      console.log(resp);
 
       let weeksLived = "";
       let age = "";
@@ -74,7 +79,7 @@ const page = () => {
         bio: resp.bio || "",
         linkedInUrl: resp.linkedInUrl || "",
         websites: resp.websites || [],
-        isOnboarded: resp.isOnboarded || false,
+        hasOnboarded: resp.isOnboarded || false,
       });
 
       setFormData({
@@ -89,7 +94,7 @@ const page = () => {
         bio: resp.bio || "",
         linkedInUrl: resp.linkedInUrl || "",
         websites: resp.websites || [],
-        isOnboarded: resp.isOnboarded || false,
+        hasOnboarded: resp.isOnboarded || false,
       });
 
       setIsLoggedIn(!!resp.userAdded);
@@ -126,12 +131,12 @@ const page = () => {
           profileImage={formData.profileImage}
           user={user}
         />
-        {/* <CommonFieldsSection
-        formState={formData}
-        formErrors={formErrors}
-        handleChange={handleChange}
-        willSkip={willSkip}
-      /> */}
+        <CommonFieldsSection
+          formState={formData}
+          formErrors={formErrors}
+          handleChange={handleChange}
+          willSkip={willSkip}
+        />
       </div>
     </div>
   );

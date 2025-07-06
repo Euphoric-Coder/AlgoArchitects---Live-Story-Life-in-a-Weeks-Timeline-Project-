@@ -11,9 +11,6 @@ import { Label } from "../ui/label";
 import Image from "next/image";
 
 const BasicInfoSection = ({ fullName, email, profileImage, user }) => {
-  console.log(fullName);
-  console.log(email);
-  console.log(profileImage);
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(fullName);
   const [preview, setPreview] = useState(profileImage);
