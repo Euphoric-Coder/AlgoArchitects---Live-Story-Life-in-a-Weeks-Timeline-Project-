@@ -62,10 +62,25 @@ const page = () => {
         age = `${years} years ${months} months ${days} days`;
       }
 
+      console.log({
+        fullName: user?.fullName || "",
+        email: user?.primaryEmailAddress?.emailAddress || "",
+        profileImage: user?.imageUrl || "",
+        gender: resp.gender || "",
+        dob: resp.dob || "", // no fallback
+        weeksLived,
+        age,
+        location: resp.location || "",
+        bio: resp.bio || "",
+        linkedInUrl: resp.linkedInUrl || "",
+        websites: resp.websites || [],
+        isOnboarded: resp.isOnboarded || false,
+      });
+
       setFormData({
-        fullName: user.fullName || "",
-        email: user.primaryEmailAddress?.emailAddress || "",
-        profileImage: user.imageUrl || "",
+        fullName: user?.fullName || "",
+        email: user?.primaryEmailAddress?.emailAddress || "",
+        profileImage: user?.imageUrl || "",
         gender: resp.gender || "",
         dob: resp.dob || "", // no fallback
         weeksLived,
@@ -85,7 +100,6 @@ const page = () => {
       checkUser();
     }
   }, [isSignedIn, user]);
-  
 
   const handleChange = (name, value) => {
     setFormData((prev) => ({
@@ -101,18 +115,18 @@ const page = () => {
     }
   };
 
-  console.log(formData)
+  console.log(formData);
 
   return (
     <div>
       <div className="flex flex-col gap-4">
-      <BasicInfoSection
-        fullName={formData.fullName}
-        email={formData.email}
-        profileImage={formData.profileImage}
-        user={user}
-      />
-      {/* <CommonFieldsSection
+        <BasicInfoSection
+          fullName={formData.fullName}
+          email={formData.email}
+          profileImage={formData.profileImage}
+          user={user}
+        />
+        {/* <CommonFieldsSection
         formState={formData}
         formErrors={formErrors}
         handleChange={handleChange}

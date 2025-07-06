@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PenBox, User } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -11,13 +11,21 @@ import { Label } from "../ui/label";
 import Image from "next/image";
 
 const BasicInfoSection = ({ fullName, email, profileImage, user }) => {
+  console.log(fullName);
+  console.log(email);
+  console.log(profileImage);
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(fullName || "");
-  const [preview, setPreview] = useState(profileImage)
+  const [name, setName] = useState(fullName);
+  const [preview, setPreview] = useState(profileImage);
   const [newFile, setNewFile] = useState(null);
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  useEffect(() => {
+    setName(fullName);
+    setPreview(profileImage);
+  }, [fullName, profileImage]);
+  
   const handleFileDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
@@ -78,15 +86,26 @@ const BasicInfoSection = ({ fullName, email, profileImage, user }) => {
         </h2>
 
         {!isEditing ? (
-          <Button onClick={() => setIsEditing(true)} className="btn9">
+          <Button
+            onClick={() => {
+              setIsEditing(true);
+            }}
+            className="btn9"
+          >
             <PenBox /> Update Profile
           </Button>
         ) : (
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={handleCancel} className="rounded-3xl">
+            <Button
+              variant="ghost"
+              onClick={handleCancel}
+              className="rounded-3xl"
+            >
               Cancel
             </Button>
-            <Button onClick={handleSave} className="btn9">Save</Button>
+            <Button onClick={handleSave} className="btn9">
+              Save
+            </Button>
           </div>
         )}
       </div>
