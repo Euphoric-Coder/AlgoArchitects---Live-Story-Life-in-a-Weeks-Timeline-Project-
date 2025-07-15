@@ -2,12 +2,9 @@
 
 import BasicInfoSection from "@/components/Form/BasicInfoSection";
 import CommonFieldsSection from "@/components/Form/CommonFieldsSection";
-import { db } from "@/lib/dbConfig";
-import { Users } from "@/lib/schema";
+import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
-import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const page = () => {
   const { user, isSignedIn } = useUser();
@@ -26,10 +23,10 @@ const page = () => {
     bio: "",
     linkedInUrl: "",
     websites: [],
-
     hasOnboarded: false,
   });
 
+  const [initialData, setInitialData] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
@@ -38,8 +35,6 @@ const page = () => {
 
       const result = await fetch("/api/user-data");
       const resp = await result.json();
-
-      console.log(resp);
 
       let weeksLived = "";
       let age = "";
@@ -67,12 +62,12 @@ const page = () => {
         age = `${years} years ${months} months ${days} days`;
       }
 
-      console.log({
+      const updatedData = {
         fullName: user?.fullName || "",
         email: user?.primaryEmailAddress?.emailAddress || "",
         profileImage: user?.imageUrl || "",
         gender: resp.gender || "",
-        dob: resp.dob || "", // no fallback
+        dob: resp.dob || "",
         weeksLived,
         age,
         location: resp.location || "",
@@ -80,23 +75,10 @@ const page = () => {
         linkedInUrl: resp.linkedInUrl || "",
         websites: resp.websites || [],
         hasOnboarded: resp.isOnboarded || false,
-      });
+      };
 
-      setFormData({
-        fullName: user?.fullName || "",
-        email: user?.primaryEmailAddress?.emailAddress || "",
-        profileImage: user?.imageUrl || "",
-        gender: resp.gender || "",
-        dob: resp.dob || "", // no fallback
-        weeksLived,
-        age,
-        location: resp.location || "",
-        bio: resp.bio || "",
-        linkedInUrl: resp.linkedInUrl || "",
-        websites: resp.websites || [],
-        hasOnboarded: resp.isOnboarded || false,
-      });
-
+      setFormData(updatedData);
+      setInitialData(updatedData); // store initial data
       setIsLoggedIn(!!resp.userAdded);
       setOnboarded(!!resp.isOnboarded);
     };
@@ -120,7 +102,14 @@ const page = () => {
     }
   };
 
-  console.log(formData);
+  const isDataChanged = () => {
+    return JSON.stringify(formData) !== JSON.stringify(initialData);
+  };
+
+  const handleSave = () => {
+    console.log("Updated formData:", formData);
+    setInitialData(formData); // Update initial to current after save
+  };
 
   return (
     <div>
@@ -137,6 +126,14 @@ const page = () => {
           handleChange={handleChange}
           willSkip={willSkip}
         />
+        {isDataChanged() && (
+          <Button
+            className="btn7"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        )}
       </div>
     </div>
   );
