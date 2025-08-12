@@ -1,7 +1,55 @@
-import React, { use, useEffect, useState } from "react";
+"use client";
+
+import React, { useMemo, useState } from "react";
 import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
 import AnniversaryList from "./AnniversaryList";
+
+// shadcn/ui
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@/components/ui/hover-card";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+
+const MONTHS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+/** Map 1..52 → { monthIndex, weekIndexInMonth(0..3) } */
+function mapWeekToMonth(weekNumber) {
+  const zeroBased = weekNumber - 1;
+  const monthIndex = Math.floor(zeroBased / 4); // 0..12
+  const weekIndexInMonth = zeroBased % 4; // 0..3
+  return { monthIndex, weekIndexInMonth };
+}
 
 const TimelineView = ({
   selectedYear,
@@ -10,20 +58,38 @@ const TimelineView = ({
   timelineData,
   refreshData,
 }) => {
-  const [hoveredWeek, setHoveredWeek] = useState(null);
-  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [selectedWeek, setSelectedWeek] = useState(null); // desktop multi-events modal
+  const [mobileWeek, setMobileWeek] = useState(null); // mobile sheet week number
 
-  const years = Object.keys(timelineData).map(Number).sort();
+  const years = useMemo(
+    () =>
+      Object.keys(timelineData)
+        .map(Number)
+        .sort((a, b) => a - b),
+    [timelineData]
+  );
   const currentYearEvents = timelineData[selectedYear] || [];
 
-  // Group events by week
-  const eventsByWeek = currentYearEvents.reduce((acc, event) => {
-    if (!acc[event.week]) {
-      acc[event.week] = [];
+  // group events by week
+  const eventsByWeek = useMemo(() => {
+    const acc = {};
+    for (const ev of currentYearEvents) {
+      (acc[ev.week] ||= []).push(ev);
     }
-    acc[event.week].push(event);
     return acc;
-  }, {});
+  }, [currentYearEvents]);
+
+  // precompute month buckets for mobile
+  const eventsByMonth = useMemo(() => {
+    const buckets = Array.from({ length: 12 }, () => [[], [], [], []]); // 12 months × 4 weeks
+    Object.entries(eventsByWeek).forEach(([wk, events]) => {
+      const weekNumber = Number(wk);
+      if (weekNumber < 1 || weekNumber > 52) return;
+      const { monthIndex, weekIndexInMonth } = mapWeekToMonth(weekNumber);
+      if (monthIndex <= 11) buckets[monthIndex][weekIndexInMonth] = events;
+    });
+    return buckets;
+  }, [eventsByWeek]);
 
   const eventTypes = [
     {
@@ -58,38 +124,33 @@ const TimelineView = ({
     },
   ];
 
-  const getWeekEvents = (weekNumber) => {
-    return eventsByWeek[weekNumber] || [];
+  const getWeekEvents = (weekNumber) => eventsByWeek[weekNumber] || [];
+  const getPrimaryEventColor = (events) =>
+    events.length ? events[0].color : "";
+
+  const handleWeekClickDesktop = (weekNumber, events) => {
+    if (!events.length) return;
+    if (events.length === 1) onEventClick(events[0].id);
+    else setSelectedWeek(selectedWeek === weekNumber ? null : weekNumber);
   };
 
-  const getPrimaryEventColor = (events) => {
-    if (events.length === 0) return "";
-    // Use the first event's color as primary
-    return events[0].color;
-  };
-
-  const handleWeekClick = (weekNumber, events) => {
-    if (events.length === 0) return;
-
-    if (events.length === 1) {
-      onEventClick(events[0].id);
-    } else {
-      setSelectedWeek(selectedWeek === weekNumber ? null : weekNumber);
-    }
+  const handleWeekClickMobile = (weekNumber, events) => {
+    if (!events.length) return;
+    setMobileWeek(weekNumber);
   };
 
   return (
     <div className="space-y-8">
-      {/* Timeline Container */}
+      {/* Container */}
       <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl border-4 border-blue-600 dark:border-blue-300 shadow-xl p-8">
-        {/* Header Section */}
+        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 pb-6 border-b border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center gap-4 mb-6 lg:mb-0">
             <div className="relative">
               <div className="p-3 bg-gradient-to-br from-blue-500 via-purple-500 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/25">
                 <Calendar className="w-6 h-6 text-white" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full border-2 border-white dark:border-slate-800"></div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full border-2 border-white dark:border-slate-800" />
             </div>
             <div>
               <h2 className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-500 dark:from-blue-500 dark:via-indigo-500 dark:to-cyan-400">
@@ -142,7 +203,7 @@ const TimelineView = ({
               >
                 <div
                   className={`w-3 h-3 bg-gradient-to-r ${type.color} rounded-full shadow-sm`}
-                ></div>
+                />
                 <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
                   {type.label}
                 </span>
@@ -151,145 +212,226 @@ const TimelineView = ({
           </div>
         </div>
 
-        {/* Month Labels */}
-        <div className="grid grid-cols-12 gap-2 mb-4">
-          {[
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ].map((month) => (
-            <div key={month} className="text-center">
-              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
-                {month}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Week Grid */}
-        <div className="relative p-6 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-900/50 rounded-xl border border-blue-600 dark:border-blue-300 backdrop-blur-sm shadow-inner">
-          <div className="grid grid-cols-12 gap-2">
-            {Array.from({ length: 12 }, (_, monthIndex) => (
-              <div key={monthIndex} className="flex flex-col gap-1.5">
-                {Array.from({ length: 4 }, (_, weekInMonth) => {
-                  const weekNumber = monthIndex * 4 + weekInMonth + 1;
-                  if (weekNumber > 52) return null;
-
-                  const weekEvents = getWeekEvents(weekNumber);
-                  const hasEvents = weekEvents.length > 0;
-                  const hasMultipleEvents = weekEvents.length > 1;
-
-                  return (
-                    <div
-                      key={weekNumber}
-                      className={`relative group cursor-pointer transition-all duration-300 ${
-                        hasEvents
-                          ? `bg-gradient-to-br ${getPrimaryEventColor(
-                              weekEvents
-                            )} shadow-lg hover:shadow-xl transform hover:scale-125 hover:-translate-y-1 border border-white/20`
-                          : "bg-slate-300/60 dark:bg-slate-600/60 hover:bg-slate-400/80 dark:hover:bg-slate-500/80 border border-slate-400/20 dark:border-slate-500/20 hover:border-slate-500/40 dark:hover:border-slate-400/40"
-                      } w-full h-3.5 rounded-md backdrop-blur-sm`}
-                      onMouseEnter={() => setHoveredWeek(weekNumber)}
-                      onMouseLeave={() => setHoveredWeek(null)}
-                      onClick={() => handleWeekClick(weekNumber, weekEvents)}
-                    >
-                      {hasEvents && (
-                        <>
-                          <div className="absolute inset-0 bg-white/20 rounded-md"></div>
-
-                          {/* Multiple events indicator */}
-                          {hasMultipleEvents && (
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-white dark:bg-slate-800 rounded-full border-2 border-current flex items-center justify-center">
-                              <span className="text-xs font-bold text-slate-800 dark:text-white">
-                                {weekEvents.length}
-                              </span>
-                            </div>
-                          )}
-
-                          {/* Hover tooltip */}
-                          {hoveredWeek === weekNumber && (
-                            <div className="absolute -top-20 left-1/2 transform -translate-x-1/2 opacity-100 transition-all duration-300 z-200 pointer-events-none">
-                              <div className="bg-slate-900 dark:bg-slate-700 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-slate-700 dark:border-slate-600 backdrop-blur-sm min-w-48 max-w-64">
-                                <div className="font-semibold mb-1">
-                                  Week {weekNumber} • {weekEvents.length} event
-                                  {weekEvents.length > 1 ? "s" : ""}
-                                </div>
-                                {weekEvents.slice(0, 3).map((event, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="text-slate-300 dark:text-slate-400 text-xs mb-1 last:mb-0"
-                                  >
-                                    • {event.title}
-                                  </div>
-                                ))}
-                                {weekEvents.length > 3 && (
-                                  <div className="text-slate-400 dark:text-slate-500 text-xs">
-                                    +{weekEvents.length - 3} more...
-                                  </div>
-                                )}
-                                <div className="text-slate-400 dark:text-slate-500 text-xs mt-1">
-                                  {weekEvents.length === 1
-                                    ? "Click to view"
-                                    : "Click to see all"}
-                                </div>
-                                <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900 dark:border-t-slate-700"></div>
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  );
-                })}
+        {/* ---------- DESKTOP (md+) GRID WITH HOVERCARD ---------- */}
+        <div className="hidden md:block">
+          {/* Month Labels */}
+          <div className="grid grid-cols-12 gap-2 mb-4">
+            {MONTHS.map((month) => (
+              <div key={month} className="text-center">
+                <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 tracking-wide">
+                  {month}
+                </span>
               </div>
             ))}
           </div>
+
+          {/* Week Grid */}
+          <div className="relative p-6 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-900/50 rounded-xl border border-blue-600 dark:border-blue-300 backdrop-blur-sm shadow-inner">
+            <div className="grid grid-cols-12 gap-2">
+              {Array.from({ length: 12 }, (_, monthIndex) => (
+                <div key={monthIndex} className="flex flex-col gap-1.5">
+                  {Array.from({ length: 4 }, (_, weekInMonth) => {
+                    const weekNumber = monthIndex * 4 + weekInMonth + 1;
+                    if (weekNumber > 52) return null;
+
+                    const weekEvents = getWeekEvents(weekNumber);
+                    const hasEvents = weekEvents.length > 0;
+                    const hasMultipleEvents = weekEvents.length > 1;
+
+                    const Cell = (
+                      <div
+                        className={`relative transition-all duration-300 ${
+                          hasEvents
+                            ? `bg-gradient-to-br ${getPrimaryEventColor(weekEvents)} shadow-lg hover:shadow-xl transform hover:scale-125 hover:-translate-y-1 border border-white/20`
+                            : "bg-slate-300/60 dark:bg-slate-600/60 hover:bg-slate-400/80 dark:hover:bg-slate-500/80 border border-slate-400/20 dark:border-slate-500/20 hover:border-slate-500/40 dark:hover:border-slate-400/40"
+                        } w-full h-3.5 rounded-md backdrop-blur-sm cursor-pointer`}
+                        onClick={() =>
+                          handleWeekClickDesktop(weekNumber, weekEvents)
+                        }
+                        aria-label={`Week ${weekNumber}${hasEvents ? `, ${weekEvents.length} event${hasMultipleEvents ? "s" : ""}` : ""}`}
+                      >
+                        {hasEvents && (
+                          <>
+                            <div className="absolute inset-0 bg-white/20 rounded-md" />
+                            {hasMultipleEvents && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-white dark:bg-slate-800 rounded-full border-2 border-current flex items-center justify-center">
+                                <span className="text-xs font-bold text-slate-800 dark:text-white">
+                                  {weekEvents.length}
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    );
+
+                    if (!hasEvents) return <div key={weekNumber}>{Cell}</div>;
+
+                    return (
+                      <HoverCard
+                        key={weekNumber}
+                        openDelay={120}
+                        closeDelay={80}
+                      >
+                        <HoverCardTrigger asChild>{Cell}</HoverCardTrigger>
+                        <HoverCardContent
+                          side="top"
+                          align="center"
+                          className="w-64 p-3"
+                        >
+                          <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                            Week {weekNumber} • {weekEvents.length} event
+                            {hasMultipleEvents ? "s" : ""}
+                          </div>
+                          <div className="space-y-1.5">
+                            {weekEvents.slice(0, 4).map((event, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => onEventClick(event.id)}
+                                className="w-full text-left text-[13px] px-2 py-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700/70 transition"
+                              >
+                                <div className="flex items-start gap-2">
+                                  <div
+                                    className={`mt-0.5 w-2 h-2 rounded-full bg-gradient-to-r ${event.color}`}
+                                  />
+                                  <span className="line-clamp-2 text-slate-800 dark:text-slate-100">
+                                    {event.title}
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                          {weekEvents.length > 4 && (
+                            <div className="mt-2 text-[12px] text-slate-500 dark:text-slate-400">
+                              +{weekEvents.length - 4} more…
+                            </div>
+                          )}
+                          <div className="mt-2 text-[12px] text-slate-500 dark:text-slate-400">
+                            {hasMultipleEvents
+                              ? "Click cell to see all"
+                              : "Click to open"}
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Multiple Events Popup */}
-        {selectedWeek &&
-          eventsByWeek[selectedWeek] &&
-          eventsByWeek[selectedWeek].length > 1 && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div
-                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                onClick={() => setSelectedWeek(null)}
-              />
-              <div className="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-6 max-w-md w-full max-h-96 overflow-y-auto">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
-                    Week {selectedWeek} Events
-                  </h3>
-                  <button
-                    onClick={() => setSelectedWeek(null)}
-                    className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
-                  >
-                    <Plus className="w-4 h-4 text-slate-500 dark:text-slate-400 rotate-45" />
-                  </button>
-                </div>
+        {/* ---------- MOBILE ( < md ) MONTH LIST WITH WEEK CHIPS + SHEET ---------- */}
+        <div className="md:hidden">
+          <Accordion type="single" collapsible className="w-full">
+            {Array.from({ length: 12 }, (_, monthIdx) => {
+              // compute how many events this month
+              const monthWeeks = eventsByMonth[monthIdx];
+              const monthCount = monthWeeks.flat().length;
+              const monthHasAny = monthCount > 0;
 
-                <div className="space-y-3">
-                  {eventsByWeek[selectedWeek].map((event, index) => (
+              return (
+                <AccordionItem key={MONTHS[monthIdx]} value={MONTHS[monthIdx]}>
+                  <AccordionTrigger className="text-base">
+                    <div className="flex items-center justify-between w-full pr-2">
+                      <span className="font-medium">{MONTHS[monthIdx]}</span>
+                      <span
+                        className={`ml-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+                          monthHasAny
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"
+                            : "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-300"
+                        }`}
+                      >
+                        {monthCount} {monthCount === 1 ? "event" : "events"}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-4 gap-2 py-2">
+                      {Array.from({ length: 4 }, (_, w) => {
+                        const weekNumber = monthIdx * 4 + w + 1;
+                        if (weekNumber > 52) return null;
+                        const weekEvents = getWeekEvents(weekNumber);
+                        const hasEvents = weekEvents.length > 0;
+                        const multiple = weekEvents.length > 1;
+                        const color = hasEvents
+                          ? getPrimaryEventColor(weekEvents)
+                          : "";
+
+                        return (
+                          <button
+                            key={weekNumber}
+                            onClick={() =>
+                              handleWeekClickMobile(weekNumber, weekEvents)
+                            }
+                            className={`relative h-9 rounded-lg border text-xs px-1.5 transition ${
+                              hasEvents
+                                ? `bg-gradient-to-br ${color} text-white border-white/20 shadow-sm active:scale-95`
+                                : "bg-slate-200/70 dark:bg-slate-700/70 text-slate-700 dark:text-slate-200 border-slate-300/50 dark:border-slate-600/50 active:scale-95"
+                            }`}
+                            aria-label={`Week ${weekNumber}${hasEvents ? `, ${weekEvents.length} events` : ""}`}
+                          >
+                            <span className="font-medium">
+                              W{weekNumber - monthIdx * 4}
+                            </span>
+                            {hasEvents && (
+                              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white dark:bg-slate-800 border-2 border-current text-[10px] font-bold flex items-center justify-center">
+                                {weekEvents.length}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
+
+          {/* Mobile sheet for a week's events */}
+          <Sheet
+            open={!!mobileWeek}
+            onOpenChange={(open) => !open && setMobileWeek(null)}
+          >
+            <SheetContent
+              side="bottom"
+              className="max-h-[70vh] overflow-y-auto"
+            >
+              <SheetHeader>
+                <SheetTitle>
+                  {mobileWeek ? (
+                    <>
+                      {(() => {
+                        const { monthIndex, weekIndexInMonth } =
+                          mapWeekToMonth(mobileWeek);
+                        return `${MONTHS[monthIndex]} • Week ${weekIndexInMonth + 1}`;
+                      })()}
+                    </>
+                  ) : (
+                    "Week"
+                  )}
+                </SheetTitle>
+                <SheetDescription>
+                  {mobileWeek ? `Week ${mobileWeek} of ${selectedYear}` : ""}
+                </SheetDescription>
+              </SheetHeader>
+
+              <div className="mt-4 space-y-3">
+                {mobileWeek &&
+                  getWeekEvents(mobileWeek).map((event, idx) => (
                     <div
-                      key={index}
-                      className="group p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 transition-all duration-200 cursor-pointer"
+                      key={idx}
+                      className="group p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 transition-all duration-200"
                       onClick={() => {
                         onEventClick(event.id);
-                        setSelectedWeek(null);
+                        setMobileWeek(null);
                       }}
+                      role="button"
                     >
                       <div className="flex items-start gap-3">
                         <div
-                          className={`p-2 bg-gradient-to-br ${event.color} rounded-lg shadow-sm group-hover:scale-105 transition-transform duration-200`}
+                          className={`p-2 bg-gradient-to-br ${event.color} rounded-lg shadow-sm group-active:scale-95 transition-transform duration-200`}
                         >
                           <event.icon className="w-4 h-4 text-white" />
                         </div>
@@ -311,10 +453,24 @@ const TimelineView = ({
                       </div>
                     </div>
                   ))}
-                </div>
+
+                {mobileWeek && getWeekEvents(mobileWeek).length === 0 && (
+                  <p className="text-center text-sm text-slate-500 dark:text-slate-400 py-6">
+                    No events in this week.
+                  </p>
+                )}
               </div>
-            </div>
-          )}
+
+              <SheetFooter className="mt-4">
+                <SheetClose asChild>
+                  <Button variant="outline" className="w-full">
+                    Close
+                  </Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        </div>
 
         {/* Events Summary */}
         <div className="mt-8 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
@@ -332,7 +488,7 @@ const TimelineView = ({
 
             {currentYearEvents.length > 0 && (
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-500/10 dark:to-emerald-600/10 rounded-full border border-emerald-200/50 dark:border-emerald-400/20">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                 <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
                   Active Year
                 </span>
@@ -354,7 +510,7 @@ const TimelineView = ({
                       className={`relative p-2.5 bg-gradient-to-br ${event.color} rounded-lg shadow-md shadow-slate-200/20 dark:shadow-slate-900/20 group-hover:scale-110 transition-transform duration-300`}
                     >
                       <event.icon className="w-5 h-5 text-white" />
-                      <div className="absolute inset-0 bg-white/20 rounded-lg"></div>
+                      <div className="absolute inset-0 bg-white/20 rounded-lg" />
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -381,7 +537,6 @@ const TimelineView = ({
                     </div>
                   </div>
 
-                  {/* Subtle background pattern */}
                   <div className="absolute top-0 right-0 w-16 h-16 opacity-5 dark:opacity-10">
                     <event.icon className="w-full h-full text-slate-600 dark:text-slate-400" />
                   </div>
@@ -402,6 +557,7 @@ const TimelineView = ({
             </div>
           )}
         </div>
+
         <AnniversaryList selectedYear={selectedYear} />
       </div>
 
@@ -418,11 +574,72 @@ const TimelineView = ({
             }`}
           >
             {year === selectedYear && (
-              <div className="absolute inset-0 bg-white/30 rounded-full"></div>
+              <div className="absolute inset-0 bg-white/30 rounded-full" />
             )}
           </button>
         ))}
       </div>
+
+      {/* Desktop multi-events popup reuses your existing block */}
+      {selectedWeek &&
+        eventsByWeek[selectedWeek] &&
+        eventsByWeek[selectedWeek].length > 1 && (
+          <div className="fixed inset-0 z-50 hidden md:flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setSelectedWeek(null)}
+            />
+            <div className="relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl p-6 max-w-md w-full max-h-96 overflow-y-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-white">
+                  Week {selectedWeek} Events
+                </h3>
+                <button
+                  onClick={() => setSelectedWeek(null)}
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
+                >
+                  <Plus className="w-4 h-4 text-slate-500 dark:text-slate-400 rotate-45" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {eventsByWeek[selectedWeek].map((event, index) => (
+                  <div
+                    key={index}
+                    className="group p-4 bg-slate-50 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 transition-all duration-200 cursor-pointer"
+                    onClick={() => {
+                      onEventClick(event.id);
+                      setSelectedWeek(null);
+                    }}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div
+                        className={`p-2 bg-gradient-to-br ${event.color} rounded-lg shadow-sm group-hover:scale-105 transition-transform duration-200`}
+                      >
+                        <event.icon className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-slate-800 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">
+                          {event.title}
+                        </h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2">
+                          {event.description}
+                        </p>
+                        <div
+                          className={`inline-block px-2 py-0.5 bg-gradient-to-r ${event.color} rounded-full mt-2`}
+                        >
+                          <span className="text-xs font-medium text-white capitalize">
+                            {event.type}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 };
