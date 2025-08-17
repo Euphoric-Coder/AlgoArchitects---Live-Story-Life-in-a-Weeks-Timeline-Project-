@@ -10,14 +10,14 @@ Whether you're reflecting on your journey, planning ahead, or simply curious abo
 
 ## Table of Contents
 
-- [Project Purpose](#-project-purpose)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Installation & Setup](#-installation--setup)
-- [Project Structure](#-project-structure)
+- [Project Purpose](#project-purpose)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Installation & Setup](#installation--setup)
+- [Project Structure](#project-structure)
 - [Timeline Export (PDF Generation of Event Timeline)](#timeline-export-pdf-generation-of-timeline)
-- [Contributors](#-contributors)
-- [PowerPoint Presentation](#-contributors)
+- [Contributors](#contributors)
+- [PowerPoint Presentation](#contributors)
 
 
 ---
