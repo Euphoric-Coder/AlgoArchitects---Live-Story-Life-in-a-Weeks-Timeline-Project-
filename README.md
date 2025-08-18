@@ -6,8 +6,6 @@ Whether you're reflecting on your journey, planning ahead, or simply curious abo
 
 ---
 
-
-
 ## Table of Contents
 
 - [Project Purpose](#project-purpose)
@@ -230,29 +228,8 @@ For each year (descending order):
 
 ---
 
-### 📅 Example Event Data
-
-```js
-[
-  {
-    id: 'e1',
-    year: 2023,
-    week: 24,
-    date: '2023-06-14',
-    type: 'milestone',
-    title: 'Graduated College',
-    description: 'Completed my Computer Science degree with distinction.'
-  },
-  ...
-]
-```
-
-
 ## PowerPoint Presentation
 [PPT File](https://github.com/Euphoric-Coder/AlgoArchitects---Live-Story-Life-in-a-Weeks-Timeline-Project-/blob/main/Live%20Story%20(SD-2%20Life%20in%20Weeks%20Timeline)%20Presentation.pptx)
-
-
-
 
 ## Contributors
 
