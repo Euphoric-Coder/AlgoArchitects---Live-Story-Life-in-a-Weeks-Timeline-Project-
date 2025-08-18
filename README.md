@@ -57,7 +57,7 @@ Time passes faster than we realize. Most people live over **4,000 weeks**, but r
 
 | Layer           | Technology                     |
 |----------------|---------------------------------|
-| Framework       | **Next.js** (React 18, App Router and Used API routes for backend handling) |
+| Framework       | **Next.js** |
 | Styling         | **Tailwind CSS**, responsive utility-first design, **ShadCN UI** |
 | Auth & Profile  | **clerk.com** for modern identity management |
 | ORM             | **Drizzle ORM** for type-safe, schema-driven PostgreSQL |
