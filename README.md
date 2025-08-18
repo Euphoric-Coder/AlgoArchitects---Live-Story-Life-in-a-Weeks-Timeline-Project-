@@ -39,10 +39,10 @@ Time passes faster than we realize. Most people live over **4,000 weeks**, but r
 
 | Feature                | Description |
 |------------------------|-------------|
-| **Authentication**  | User sign-up, login, and profile setup with Clerk |
+| **Authentication**  | User sign-up and login |
 | **Birthdate Logic** | Auto-calculates total weeks lived since user's birth and also some additional data Gender, Bio, Relevant Links and also the User can update the Profile Picture|
 | **Timeline Engine** | Scrollable & zoomable interface to visualize each week and Interactive Interface|
-| **Event Management** | Add, edit, delete personal events with title, date, category |
+| **Event Management** | Add, edit, delete personal events with title, date, category, etc. |
 | **Image Attachments** | Upload and attach media (photos, documents) via ImageKit.io |
 | **Category Tagging** | Filter, color-code events by type (e.g., Personal, Academic, Travel) |
 | **Reminders** | Show a Panel of Upcoming Anniversary |
