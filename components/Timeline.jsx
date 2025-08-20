@@ -5,7 +5,6 @@ import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import FormBackgroundEffect from "./Effect/FormBackgroundEffect";
 import AnniversaryList from "./AnniversaryList";
 
-// shadcn/ui
 import {
   HoverCard,
   HoverCardTrigger,
@@ -277,7 +276,7 @@ const TimelineView = ({
                         <HoverCardContent
                           side="top"
                           align="center"
-                          className="w-64 p-3"
+                          className="w-64 p-3 rounded-3xl"
                         >
                           <div className="text-xs text-slate-500 dark:text-slate-400 mb-1">
                             Week {weekNumber} • {weekEvents.length} event
