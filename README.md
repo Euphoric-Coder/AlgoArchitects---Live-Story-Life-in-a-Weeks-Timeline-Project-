@@ -59,7 +59,7 @@ Time passes faster than we realize. Most people live over **4,000 weeks**, but r
 |----------------|---------------------------------|
 | Framework       | **Next.js** |
 | Styling         | **Tailwind CSS**, responsive utility-first design, **ShadCN UI** |
-| Auth & Profile  | **clerk.com** for modern identity management |
+| Auth & Profile  | **Clerk Authentication** for modern identity management |
 | ORM             | **Drizzle ORM** for type-safe, schema-driven PostgreSQL |
 | Database        | **PostgreSQL** hosted on **NeonDB** |
 | File Handling   | **ImageKit.io** for image uploads, transformations |
