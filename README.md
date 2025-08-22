@@ -5,7 +5,6 @@
 Whether you're reflecting on your journey, planning ahead, or simply curious about how time has flown, this app provides a clear and customizable view of your life in weeks.
 
 ---
-
 ## Table of Contents
 
 - [Project Purpose](#project-purpose)
@@ -112,7 +111,104 @@ npm run dev
 
 
 ## Project Structure
-![Project Structure](/PROJECT%20STRUCTURE.png)
+```plaintext
+live-story/
+├── app/
+│   ├── api/
+│   │   ├── add-user/
+│   │   │   └── route.js
+│   │   ├── delete-image/
+│   │   │   └── route.js
+│   │   ├── fetch-events/
+│   │   │   └── route.js
+│   │   ├── fetch-timeline/
+│   │   │   └── route.js
+│   │   ├── get-imgurl/
+│   │   │   └── route.js
+│   │   ├── upload-auth/
+│   │   │   └── route.js
+│   │   └── user-data/
+│   │       └── route.js
+│   ├── (auth)/
+│   │   ├── sign-in/[[...sign-in]]/page.jsx
+│   │   └── sign-up/[[...sign-up]]/page.jsx
+│   ├── (route)/
+│   │   ├── onboarding/
+│   │   │   └── page.jsx
+│   │   └── dashboard/
+│   │       ├── profile/
+│   │       │   └── page.jsx
+│   │       ├── event/
+│   │       │   ├── page.jsx
+│   │       │   └── [id]/
+│   │       │       └── page.jsx
+│   │       ├── layout.jsx
+│   │       └── page.jsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.jsx
+│   └── page.js
+├── components/
+│   ├── Effect/
+│   │   └── FormBackgroundEffect.jsx
+│   ├── Form/
+│   │   ├── BasicInfoSection.jsx
+│   │   ├── CommonFieldSection.jsx
+│   │   └── UI/
+│   │       ├── FileUpload.jsx
+│   │       ├── FormComboBox.jsx
+│   │       ├── FormInput.jsx
+│   │       ├── FormSelect.jsx
+│   │       ├── FormTextArea.jsx
+│   │       ├── MultiSelect.jsx
+│   │       └── SingleSelect.jsx
+│   ├── Landing/
+│   │   ├── CallToAction.jsx
+│   │   ├── Features.jsx
+│   │   ├── Hero.jsx
+│   │   ├── HowItWorks.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── Preview.jsx
+│   │   ├── Teams.jsx
+│   │   ├── TimelineView.jsx
+│   │   └── WhyThisMatters.jsx
+│   ├── Oboarding/
+│   │   ├── OboardingSuccessPage.jsx
+│   │   ├── RedirectPage.jsx
+│   │   └── SuccessIcon.jsx
+│   ├── Timeline.jsx
+│   ├── AnniversaryList.jsx
+│   ├── ExportModal.jsx
+│   ├── theme-btn.js
+│   ├── theme-provider.js
+│   ├── ThemedNotifications.jsx
+│   ├── AddEventModal.jsx
+│   └── Navbar.jsx
+├── emails/
+│   └── WelcomeEmail.jsx
+├── lib/
+│   ├── anniversaryDetails.js
+│   ├── dbConfig.js
+│   ├── pdfExports.js
+│   ├── schema.jsx
+│   ├── seedHistoricalData.js
+│   ├── sendEmail.js
+│   └── utils.js
+├── public/
+│   ├── Anurag.png
+│   ├── default-avatar.jpg
+│   ├── dummy.jpg
+│   ├── historical_event.csv
+│   ├── logo.png
+│   ├── Sagnik.png
+│   └── Sushmita.png
+├── .gitignore
+├── drizzle.config.js
+├── .env.local
+├── middleware.js
+├── package.json
+└── README.MD
+```
 
 ## Timeline Export (PDF Generation of Timeline)
 
