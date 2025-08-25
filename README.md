@@ -108,8 +108,6 @@ touch .env.local
 npm run dev
 ```
 
-
-
 ## Project Structure
 ```plaintext
 live-story/
